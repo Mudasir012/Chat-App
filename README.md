@@ -36,7 +36,7 @@ A high-impact, real-time messaging platform built with the MERN stack, featuring
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/chat-app.git
+git clone https://github.com/Mudasir012/chat-app.git
 cd chat-app
 ```
 
