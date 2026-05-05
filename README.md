@@ -1,4 +1,4 @@
-# 🚀 BRUTALIST CHAT APP
+# 🚀 CHAT APP
 
 A high-impact, real-time messaging platform built with the MERN stack, featuring a bold neo-brutalist aesthetic, secure authentication, and multimedia support.
 
