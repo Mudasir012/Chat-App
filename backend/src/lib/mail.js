@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import { WELCOME_EMAIL_TEMPLATE } from "./emailTemplates.js";
-
+//Added email service
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
