@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { Camera, Mail, User } from "lucide-react";
+import { Camera, Mail, User, Shield, Calendar } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const ProfilePage = () => {
@@ -23,33 +23,33 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="h-screen pt-20 bg-[var(--bg)] text-[var(--text)]">
+    <div className="min-h-screen pt-20 bg-[var(--bg)] text-[var(--text)]">
       <Navbar />
-      <div className="max-w-2xl mx-auto p-4 py-8">
-        <div className="border-4 border-[var(--border)] p-10 bg-[var(--bg)] shadow-[12px_12px_0px_0px_var(--border)] space-y-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-black uppercase tracking-tighter">Profile</h1>
-            <p className="mt-2 text-xs font-mono uppercase opacity-50">Your account information</p>
+      <div className="max-w-2xl mx-auto p-4 py-12">
+        <div className="card-curvy p-8 md:p-12 space-y-10 shadow-xl shadow-indigo-500/5">
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">Your Profile</h1>
+            <p className="text-sm text-[var(--text-muted)]">Manage your account information and preferences</p>
           </div>
 
           {/* Avatar Upload Section */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative group">
               <img
                 src={selectedImg || authUser.profilePic || "/avatar.png"}
                 alt="Profile"
-                className="size-32 object-cover border-4 border-[var(--border)]"
+                className="size-36 object-cover rounded-[2.5rem] border-4 border-white dark:border-slate-800 shadow-2xl transition-transform duration-300 group-hover:scale-[1.02]"
               />
               <label
                 htmlFor="avatar-upload"
                 className={`
                   absolute bottom-0 right-0 
-                  bg-[var(--text)] p-2 border-2 border-[var(--bg)]
-                  cursor-pointer transition-all duration-200
-                  ${isUpdatingProfile ? "animate-pulse pointer-events-none" : "hover:scale-105"}
+                  bg-[var(--accent)] p-3 rounded-2xl border-4 border-[var(--bg)]
+                  cursor-pointer transition-all duration-300 shadow-lg
+                  ${isUpdatingProfile ? "animate-pulse pointer-events-none" : "hover:scale-110 active:scale-95"}
                 `}
               >
-                <Camera className="w-5 h-5 text-[var(--bg)]" />
+                <Camera className="size-5 text-white" />
                 <input
                   type="file"
                   id="avatar-upload"
@@ -60,43 +60,56 @@ const ProfilePage = () => {
                 />
               </label>
             </div>
-            <p className="text-[10px] font-black uppercase opacity-40">
-              {isUpdatingProfile ? "Uploading..." : "Click the camera to update your photo"}
-            </p>
+            <div className="text-center">
+              <p className="text-sm font-semibold text-[var(--accent)]">
+                {isUpdatingProfile ? "Uploading..." : "Change Profile Photo"}
+              </p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">JPG or PNG. Max size of 10MB</p>
+            </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="space-y-1.5">
-              <div className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <User className="w-4 h-4" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
+                <User className="size-4" />
                 Full Name
-              </div>
-              <p className="px-4 py-2.5 bg-[var(--text)] text-[var(--bg)] border-2 border-[var(--border)] font-bold uppercase">
+              </label>
+              <div className="px-5 py-3.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl font-semibold">
                 {authUser?.fullName}
-              </p>
+              </div>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <Mail className="w-4 h-4" />
+            <div className="space-y-2">
+              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
+                <Mail className="size-4" />
                 Email Address
-              </div>
-              <p className="px-4 py-2.5 border-2 border-[var(--border)] font-mono text-sm">
+              </label>
+              <div className="px-5 py-3.5 bg-[var(--bg)] border border-[var(--border)] rounded-2xl font-medium text-[var(--text-muted)] truncate">
                 {authUser?.email}
-              </p>
+              </div>
             </div>
           </div>
 
-          <div className="mt-6 border-t-2 border-[var(--border)] pt-6">
-            <h2 className="text-lg font-black uppercase tracking-tighter mb-4">Account Information</h2>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between py-2 border-b-2 border-[var(--border)] border-opacity-10">
-                <span className="font-bold opacity-50 uppercase text-[10px]">Member Since</span>
-                <span className="font-mono">{authUser.createdAt?.split("T")[0]}</span>
+          <div className="pt-10 border-t border-[var(--border)]">
+            <h2 className="text-xl font-bold tracking-tight mb-6">Account Details</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-[var(--accent)]">
+                  <Calendar className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Member Since</p>
+                  <p className="text-sm font-semibold">{authUser.createdAt?.split("T")[0]}</p>
+                </div>
               </div>
-              <div className="flex items-center justify-between py-2">
-                <span className="font-bold opacity-50 uppercase text-[10px]">Account Status</span>
-                <span className="text-green-500 font-black uppercase">Active</span>
+              <div className="p-5 rounded-2xl bg-[var(--bg)] border border-[var(--border)] flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-green-500">
+                  <Shield className="size-5" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Status</p>
+                  <p className="text-sm font-semibold text-green-500">Verified Account</p>
+                </div>
               </div>
             </div>
           </div>

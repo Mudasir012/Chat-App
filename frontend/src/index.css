@@ -1,30 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;1,9..40,300&display=swap');
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --bg: #ffffff;
-    --secondary-bg: #f5f5f5;
-    --text: #000000;
-    --border: #000000;
-    --accent: #dc2626; /* red-600 */
+    --bg: #08080f;
+    --secondary-bg: #0f0f1a;
+    --surface: #161625;
+    --text: #f1f0ff;
+    --text-muted: rgba(241,240,255,0.45);
+    --border: rgba(255, 255, 255, 0.08);
+    --accent: #a78bfa;
+    --accent-hover: #8b5cf6;
+    --secondary-accent: #f472b6;
+    --accent-green: #34d399;
+    --radius: 1.75rem;
+    --font-display: 'Bricolage Grotesque', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
   }
 
   .dark {
-    --bg: #111111;
-    --secondary-bg: #1a1a1a;
-    --text: #ffffff;
-    --border: #ffffff;
-    --accent: #ef4444; /* red-500 */
+    /* Same as root for now as requested a specific dark professional look */
+    --bg: #08080f;
+    --secondary-bg: #0f0f1a;
+    --surface: #161625;
+    --text: #f1f0ff;
+    --text-muted: rgba(241,240,255,0.45);
+    --border: rgba(255, 255, 255, 0.08);
   }
 
   html, body {
     background-color: var(--bg);
     color: var(--text);
+    font-family: var(--font-body);
+    scroll-behavior: smooth;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
   }
 
   * {
     border-color: var(--border);
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
   }
 
   body {
@@ -33,25 +51,70 @@
 
   ::selection {
     background-color: var(--accent);
-    color: white;
+    color: #08080f;
   }
 
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 12px;
+    width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--bg);
-    border-left: 2px solid var(--border);
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--text);
-    border: 2px solid var(--bg);
+    background: var(--border);
+    border-radius: 20px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: var(--text-muted);
+  }
+
+  /* Animations from reference */
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to { transform: translate(30px, 20px) scale(1.05); }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.9); }
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-8 py-3.5 bg-[var(--accent)] text-[#08080f] rounded-full font-bold hover:translate-y-[-2px] active:scale-95 transition-all shadow-[0_0_20px_rgba(167,139,250,0.3)] hover:shadow-[0_0_35px_rgba(167,139,250,0.5)];
+  }
+
+  .btn-ghost {
+    @apply px-8 py-3.5 bg-transparent text-[var(--text)] border border-[var(--border)] rounded-full font-medium hover:bg-white/5 active:scale-95 transition-all;
+  }
+  
+  .glass {
+    @apply backdrop-blur-xl bg-[rgba(15,15,26,0.7)] border border-[var(--border)];
+  }
+
+  .card-curvy {
+    @apply bg-[var(--secondary-bg)] rounded-[var(--radius)] border border-[var(--border)] shadow-xl;
+  }
+
+  .grid-bg {
+    @apply fixed inset-0 pointer-events-none z-0;
+    background-image: linear-gradient(rgba(167,139,250,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167,139,250,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .orb {
+    @apply fixed rounded-full blur-[80px] pointer-events-none z-0;
+    animation: drift 8s ease-in-out infinite alternate;
   }
 }

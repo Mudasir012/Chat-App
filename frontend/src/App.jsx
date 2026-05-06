@@ -16,7 +16,7 @@ import ProfilePage from './pages/ProfilePage.jsx'
 import './App.css'
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore()
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
 
   useEffect(() => {
     checkAuth()
@@ -25,7 +25,7 @@ function App() {
   if (isCheckingAuth && !authUser) {
     return (
       <div className="flex items-center justify-center h-screen bg-[var(--bg)]">
-        <Loader className="size-10 animate-spin text-red-600" />
+        <Loader className="size-10 animate-spin text-[var(--accent)]" />
       </div>
     )
   }

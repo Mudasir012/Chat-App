@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Mail, Lock, User, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function SignUp() {
@@ -35,45 +35,63 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] font-sans flex flex-col">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-[5%] right-[5%] size-64 bg-[var(--accent)] opacity-[0.05] blur-3xl rounded-full" />
+        <div className="absolute bottom-[5%] left-[5%] size-96 bg-[var(--secondary-accent)] opacity-[0.05] blur-3xl rounded-full" />
+      </div>
+
       <Navbar />
       <main className="flex-1 w-full flex items-center justify-center py-20 px-4">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-md p-10 border-2 border-[var(--border)] space-y-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,0.2)]"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-indigo-500/5"
         >
-          <div className="space-y-2 text-center">
-            <h1 className="text-4xl font-black uppercase tracking-tighter">Sign Up</h1>
-            <p className="text-xs font-mono uppercase tracking-widest opacity-50">Join the ChatApp Community</p>
+          <div className="space-y-3 text-center mb-10">
+            <div className="size-16 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg shadow-indigo-500/20 mb-6">
+              <UserPlus className="size-8" />
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight">Create Account</h1>
+            <p className="text-sm text-[var(--text-muted)]">Join the ChatApp community today</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest">Full Name</label>
+              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
+                <User className="size-4" />
+                Full Name
+              </label>
               <input 
                 type="text" 
-                className="w-full bg-transparent border-2 border-[var(--border)] p-3 focus:outline-none focus:bg-[var(--text)] focus:text-[var(--bg)] transition-all font-mono text-sm uppercase" 
-                placeholder="JOHN DOE"
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
+                placeholder="John Doe"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest">Email</label>
+              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
+                <Mail className="size-4" />
+                Email
+              </label>
               <input 
                 type="email" 
-                className="w-full bg-transparent border-2 border-[var(--border)] p-3 focus:outline-none focus:bg-[var(--text)] focus:text-[var(--bg)] transition-all font-mono text-sm" 
-                placeholder="your@email.com"
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
+                placeholder="you@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold uppercase tracking-widest">Password</label>
+              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
+                <Lock className="size-4" />
+                Password
+              </label>
               <input 
                 type="password" 
-                className="w-full bg-transparent border-2 border-[var(--border)] p-3 focus:outline-none focus:bg-[var(--text)] focus:text-[var(--bg)] transition-all font-mono text-sm" 
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -82,12 +100,12 @@ export default function SignUp() {
             <button 
               type="submit" 
               disabled={isSigningUp}
-              className="w-full py-4 bg-[var(--text)] text-[var(--bg)] font-bold uppercase tracking-widest hover:bg-[var(--bg)] hover:text-[var(--text)] border-2 border-[var(--border)] transition-all flex items-center justify-center gap-2"
+              className="btn-primary w-full py-4 text-base mt-4 flex items-center justify-center gap-2"
             >
               {isSigningUp ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
-                  Loading...
+                  Creating Account...
                 </>
               ) : (
                 "Create Account"
@@ -95,9 +113,9 @@ export default function SignUp() {
             </button>
           </form>
 
-          <div className="text-center pt-4 border-t-2 border-[var(--border)]">
-            <p className="text-xs font-bold uppercase">
-              Already have an account? <Link to="/signin" className="underline hover:no-underline">Sign In</Link>
+          <div className="text-center mt-10 pt-6 border-t border-[var(--border)]">
+            <p className="text-sm text-[var(--text-muted)]">
+              Already have an account? <Link to="/signin" className="text-[var(--accent)] font-semibold hover:underline decoration-2 underline-offset-4">Sign In</Link>
             </p>
           </div>
         </motion.div>
@@ -106,4 +124,5 @@ export default function SignUp() {
     </div>
   )
 }
+
 

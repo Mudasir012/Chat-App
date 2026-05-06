@@ -3,24 +3,28 @@ import ThemeToggle from './ThemeToggle'
 import { useAuthStore } from '../store/useAuthStore'
 import { LogOut, User, MessageSquare } from 'lucide-react'
 
-export default function Navbar() {
+export default function Navbar({ isCompact }) {
   const { logout, authUser } = useAuthStore()
 
   return (
-    <div className="navbar w-full flex justify-between items-center p-4 border-b-2 border-[var(--border)] bg-[var(--bg)] sticky top-0 z-50">
-      <nav className='flex items-center gap-2'>
-        <div className='p-1 bg-[var(--text)] hidden sm:block'>
-          <MessageSquare className='size-5 text-[var(--bg)]' />
+    <div className={`navbar w-full flex justify-between items-center glass sticky top-0 z-50 transition-all duration-500 ${
+      isCompact 
+        ? "p-2 px-6 rounded-none max-w-none mt-0 border-x-0 border-t-0" 
+        : "p-4 px-8 rounded-full max-w-5xl mx-auto mt-5 top-5 shadow-2xl"
+    }`}>
+      <nav className='flex items-center gap-3'>
+        <div className={`bg-[var(--accent)] rounded-xl transition-all ${isCompact ? "p-1.5" : "p-2"}`}>
+          <MessageSquare className={`${isCompact ? "size-4" : "size-5"} text-[#08080f]`} />
         </div>
-        <Link to="/" className="text-xl font-black tracking-tighter hover:text-red-600 transition-all uppercase">Chat App</Link>
+        <Link to="/" className={`${isCompact ? "text-lg" : "text-xl"} font-bold tracking-tighter hover:text-[var(--accent)] transition-all font-display`}>chatly✦</Link>
       </nav>
       
       {!authUser && (
         <nav className="hidden md:block">
-          <ul className='flex flex-row gap-8 text-xs font-bold uppercase tracking-wider'>
-            <li className='hover:line-through'><Link to="/">Home</Link></li>
-            <li className='hover:line-through'><Link to="/about">About</Link></li>
-            <li className='hover:line-through'><Link to="/contact">Contact</Link></li>
+          <ul className={`flex flex-row gap-8 text-[13px] font-medium text-[var(--text-muted)]`}>
+            <li><Link to="/" className="hover:text-[var(--text)] transition-colors">Home</Link></li>
+            <li><Link to="/about" className="hover:text-[var(--text)] transition-colors">About</Link></li>
+            <li><Link to="/contact" className="hover:text-[var(--text)] transition-colors">Contact</Link></li>
           </ul>
         </nav>
       )}
@@ -31,23 +35,30 @@ export default function Navbar() {
           <ul className='flex flex-row gap-4 items-center'>
             {!authUser ? (
               <>
-                <li className='px-4 py-1.5 border-2 border-[var(--border)] hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors text-xs font-bold uppercase'><Link to="/signin">SignIn</Link></li>
-                <li className='px-4 py-1.5 bg-red-600 text-white border-2 border-red-600 hover:bg-[var(--bg)] hover:text-red-600 transition-colors text-xs font-bold uppercase shadow-[4px_4px_0px_0px_var(--border)]'><Link to="/signup">SignUp</Link></li>
+                <li>
+                  <Link to="/signin" className='px-5 py-2 text-xs font-bold hover:text-[var(--accent)] transition-colors uppercase tracking-wider'>Sign In</Link>
+                </li>
+                <li>
+                  <Link to="/signup" className='btn-primary !px-6 !py-2.5 text-xs'>Get Started</Link>
+                </li>
               </>
             ) : (
               <>
-                <li className='hidden sm:block text-[10px] font-black uppercase opacity-50 tracking-widest'>Hi, {authUser.fullName.split(' ')[0]}</li>
-                <li className='px-3 py-1.5 border-2 border-[var(--border)] hover:bg-[var(--text)] hover:text-[var(--bg)] transition-all'>
-                  <Link to="/profile" className='flex items-center gap-2 text-xs font-bold uppercase'>
-                    <User className='size-4' />
-                    <span className='hidden lg:inline'>Profile</span>
+                <li className='hidden sm:block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider'>Hi, {authUser.fullName.split(' ')[0]}</li>
+                <li>
+                  <Link to="/profile" className={`rounded-xl border border-[var(--border)] hover:bg-white/5 transition-all flex items-center gap-2 ${isCompact ? "p-2" : "p-2.5"}`}>
+                    <User className={isCompact ? "size-3.5" : "size-4"} />
+                    <span className='hidden lg:inline text-[10px] font-bold uppercase tracking-wider'>Profile</span>
                   </Link>
                 </li>
-                <li className='px-3 py-1.5 bg-red-600 text-white border-2 border-red-600 hover:bg-black transition-all cursor-pointer shadow-[2px_2px_0px_0px_var(--border)]' onClick={logout}>
-                  <div className='flex items-center gap-2 text-xs font-bold uppercase'>
-                    <LogOut className='size-4' />
-                    <span className='hidden lg:inline'>Logout</span>
-                  </div>
+                <li>
+                  <button 
+                    onClick={logout}
+                    className={`rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all cursor-pointer flex items-center gap-2 ${isCompact ? "p-2" : "p-2.5"}`}
+                  >
+                    <LogOut className={isCompact ? "size-3.5" : "size-4"} />
+                    <span className='hidden lg:inline text-[10px] font-bold uppercase tracking-wider'>Logout</span>
+                  </button>
                 </li>
               </>
             )}
@@ -57,4 +68,5 @@ export default function Navbar() {
     </div>
   )
 }
+
 

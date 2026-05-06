@@ -36,7 +36,8 @@ export const useChatStore = create((set, get) => ({
     try {
       const res = await axiosInstance.get("/messages/users");
       set({ users: [...res.data, ...MOCK_USERS] });
-    } catch (error) {
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
       set({ users: MOCK_USERS }); // Fallback to mock only if server fails
     } finally {
       set({ isUsersLoading: false });

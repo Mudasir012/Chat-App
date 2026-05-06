@@ -1,25 +1,56 @@
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import { FileText, UserCheck, RefreshCw } from 'lucide-react'
 
 export default function Terms() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] font-sans flex flex-col">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-hidden">
+      {/* Decorative background element */}
+      <div className="absolute top-[-5%] right-[-5%] size-[400px] bg-[var(--secondary-accent)] opacity-[0.03] blur-[100px] rounded-full pointer-events-none" />
+
       <Navbar />
-      <main className="flex-1 w-full flex justify-center py-20 px-4">
+      <main className="flex-1 w-full flex justify-center py-20 px-4 relative z-10">
         <div className="container max-w-3xl space-y-12">
-          <h1 className="text-6xl font-black uppercase tracking-tighter">Terms</h1>
-          <div className="space-y-8 font-mono text-sm leading-relaxed border-t-2 border-[var(--border)] pt-8">
-            <section className="space-y-4">
-              <h2 className="text-xl font-bold uppercase tracking-tight">— Usage</h2>
-              <p>Don't be a jerk. Respect others. Use the platform for communication, not harassment.</p>
+          <div className="space-y-4 text-center md:text-left">
+            <h1 className="text-6xl font-bold tracking-tight">Terms of Service</h1>
+            <p className="text-lg text-[var(--text-muted)]">Please read these terms carefully before using ChatApp.</p>
+          </div>
+
+          <div className="space-y-6 pt-12 border-t border-[var(--border)]">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
+              <div className="size-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-500 shrink-0">
+                <UserCheck className="size-7" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-bold tracking-tight">Acceptable Usage</h2>
+                <p className="text-[var(--text-muted)] leading-relaxed">
+                  Be respectful to others. Use the platform for communication, not harassment or spam. We maintain a zero-tolerance policy for abuse.
+                </p>
+              </div>
             </section>
-            <section className="space-y-4">
-              <h2 className="text-xl font-bold uppercase tracking-tight">— Account</h2>
-              <p>You are responsible for your account and your content. Keep your password safe.</p>
+
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
+              <div className="size-14 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500 shrink-0">
+                <FileText className="size-7" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-bold tracking-tight">Account Responsibility</h2>
+                <p className="text-[var(--text-muted)] leading-relaxed">
+                  You are responsible for your account security and any content you share. Please keep your credentials safe and report any unauthorized access.
+                </p>
+              </div>
             </section>
-            <section className="space-y-4">
-              <h2 className="text-xl font-bold uppercase tracking-tight">— Changes</h2>
-              <p>We might update these terms. We'll let you know when we do.</p>
+
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
+              <div className="size-14 rounded-2xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 shrink-0">
+                <RefreshCw className="size-7" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-bold tracking-tight">Updates & Changes</h2>
+                <p className="text-[var(--text-muted)] leading-relaxed">
+                  We may occasionally update these terms to reflect changes in our service or legal requirements. We will notify you of any significant updates.
+                </p>
+              </div>
             </section>
           </div>
         </div>
@@ -28,3 +59,4 @@ export default function Terms() {
     </div>
   )
 }
+

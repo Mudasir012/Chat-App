@@ -34,12 +34,12 @@ const ChatContainer = () => {
 
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-auto bg-[var(--bg)]">
+      <div className="flex-1 flex flex-col bg-[var(--bg)]">
         <ChatHeader />
-        <div className="flex-1 p-4 space-y-4">
+        <div className="flex-1 p-6 space-y-6 overflow-y-auto">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className={`flex ${i % 2 === 0 ? "justify-end" : "justify-start"}`}>
-              <div className="w-48 h-12 bg-[var(--text)] opacity-10 animate-pulse border-2 border-[var(--border)]" />
+              <div className="w-64 h-16 bg-[var(--secondary-bg)] rounded-2xl animate-pulse border border-[var(--border)]" />
             </div>
           ))}
         </div>
@@ -49,35 +49,35 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto bg-[var(--bg)]">
+    <div className="flex-1 flex flex-col bg-[var(--bg)]">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[var(--text)]">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
         {messages.map((message) => (
           <div
             key={message._id}
             className={`flex ${message.senderId === authUser._id ? "justify-end" : "justify-start"}`}
             ref={messageEndRef}
           >
-            <div className="flex flex-col max-w-[80%] sm:max-w-[70%] gap-1">
+            <div className="flex flex-col max-w-[85%] sm:max-w-[70%] gap-1.5">
               <div
                 className={`
-                  p-3 border-2 border-[var(--border)] relative transition-all
+                  p-4 rounded-2xl shadow-sm transition-all relative
                   ${message.senderId === authUser._id 
-                    ? "bg-[var(--text)] text-[var(--bg)] shadow-[6px_6px_0px_0px_var(--accent)]" 
-                    : "bg-[var(--secondary-bg)] text-[var(--text)] shadow-[6px_6px_0px_0px_var(--border)] border-l-4 border-l-[var(--accent)]"}
+                    ? "bg-[var(--accent)] text-white rounded-tr-sm shadow-indigo-500/10" 
+                    : "bg-white dark:bg-slate-800 text-[var(--text)] rounded-tl-sm border border-[var(--border)]"}
                 `}
               >
                 {message.image && (
                   <img
                     src={message.image}
                     alt="Attachment"
-                    className="max-w-[200px] border-2 border-current mb-2 block"
+                    className="max-w-full rounded-xl border border-white/20 mb-3 block shadow-sm"
                   />
                 )}
-                {message.text && <p className="text-sm font-bold leading-relaxed">{message.text}</p>}
+                {message.text && <p className="text-sm leading-relaxed">{message.text}</p>}
                 
-                <span className="text-[8px] uppercase font-black opacity-40 mt-1 block text-right">
+                <span className={`text-[9px] font-medium mt-1.5 block text-right opacity-60 ${message.senderId === authUser._id ? "text-white/80" : "text-[var(--text-muted)]"}`}>
                   {format(new Date(message.createdAt), "HH:mm")}
                 </span>
               </div>

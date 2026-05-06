@@ -1,104 +1,25 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Marquee from '../components/Marquee'
+import { Zap, Rocket, Phone, Video } from 'lucide-react'
 
 const CHAT_SCENARIOS = [
   {
-    type: "Direct Message",
-    name: "Sarah Miller",
+    type: "Sarah Miller",
     messages: [
-      { id: 1, text: "Hey! Did you see the new design?", sender: "friend" },
-      { id: 2, text: "Just now! The brutalist look is bold.", sender: "me" },
-      { id: 3, text: "Exactly what we needed. ⚡", sender: "friend" }
-    ]
-  },
-  {
-    type: "Group Chat",
-    name: "Dev Squad 🚀",
-    messages: [
-      { id: 1, text: "Backend is deployed to main.", sender: "friend", name: "Alex" },
-      { id: 2, text: "Sweet. Testing the socket connections now.", sender: "me" },
-      { id: 3, text: "All systems green! ✅", sender: "other", name: "Jordan" }
-    ]
-  },
-  {
-    type: "System",
-    name: "Security Bot",
-    messages: [
-      { id: 1, text: "New login detected from Tokyo, JP.", sender: "friend" },
-      { id: 2, text: "That's my VPN, we're good.", sender: "me" },
-      { id: 3, text: "Session verified. Stay safe. 🛡️", sender: "friend" }
-    ]
-  },
-  {
-    type: "Gaming",
-    name: "Final Boss Raid",
-    messages: [
-      { id: 1, text: "Everyone on discord?", sender: "friend", name: "GamerX" },
-      { id: 2, text: "I'm ready. Let's get that loot.", sender: "me" },
-      { id: 3, text: "Wait for me! My PC is lagging.", sender: "other", name: "Noob123" }
-    ]
-  },
-  {
-    type: "Family",
-    name: "The Fam Jam 🏠",
-    messages: [
-      { id: 1, text: "Dinner at 7 tonight?", sender: "friend", name: "Mom" },
-      { id: 2, text: "I'll be there! Bringing dessert.", sender: "me" },
-      { id: 3, text: "Can we have pizza instead?", sender: "other", name: "Little Bro" }
-    ]
-  },
-  {
-    type: "Work",
-    name: "Product Launch",
-    messages: [
-      { id: 1, text: "Marketing assets are ready.", sender: "friend", name: "Design Lead" },
-      { id: 2, text: "Great. Engineering is finishing the build.", sender: "me" },
-      { id: 3, text: "Let's sync at 10 AM tomorrow.", sender: "other", name: "Product Mgr" }
-    ]
-  },
-  {
-    type: "Support",
-    name: "ChatApp Help",
-    messages: [
-      { id: 1, text: "Hi! How can I help you today?", sender: "friend", name: "Support AI" },
-      { id: 2, text: "My messages aren't loading.", sender: "me" },
-      { id: 3, text: "Try refreshing the page. Should work now!", sender: "friend", name: "Support AI" }
-    ]
-  },
-  {
-    type: "Cryptic",
-    name: "0xUNKNOWN",
-    messages: [
-      { id: 1, text: "Are you in?", sender: "friend" },
-      { id: 2, text: "The signal is strong.", sender: "me" },
-      { id: 3, text: "Meet at the coordinate. 📍", sender: "friend" }
-    ]
-  },
-  {
-    type: "Travel",
-    name: "Summer Trip 🏖️",
-    messages: [
-      { id: 1, text: "Hotel is booked for Bali!", sender: "friend", name: "Chloe" },
-      { id: 2, text: "Finally! Can't wait for the beach.", sender: "me" },
-      { id: 3, text: "Pack your sunscreen! ☀️", sender: "other", name: "Mark" }
-    ]
-  },
-  {
-    type: "Community",
-    name: "Global Announcements",
-    messages: [
-      { id: 1, text: "Welcome to our 1 millionth user!", sender: "friend", name: "Admin" },
-      { id: 2, text: "Wow! Big milestone. 🎉", sender: "me" },
-      { id: 3, text: "Stay tuned for major updates.", sender: "friend", name: "Admin" }
+      { id: 1, text: "hey!! did you see the redesign? 👀", sender: "friend" },
+      { id: 2, text: "omg yes just now — it looks so clean fr", sender: "me" },
+      { id: 3, text: "the dark mode actually hits different this time 😮💨", sender: "friend" },
+      { id: 4, text: "no cap, finally a chat app with actual taste ✨", sender: "me" }
     ]
   }
 ]
 
 function ChatDemo() {
-  const [scenarioIndex, setScenarioIndex] = useState(0)
+  const [scenarioIndex] = useState(0)
   const [messages, setMessages] = useState([])
   const [isTyping, setIsTyping] = useState(false)
 
@@ -110,73 +31,93 @@ function ChatDemo() {
       if (index >= currentScenario.messages.length) {
         timeout = setTimeout(() => {
           setMessages([])
-          setScenarioIndex((prev) => (prev + 1) % CHAT_SCENARIOS.length)
-        }, 3000)
+          addMessage(0)
+        }, 4000)
         return
       }
 
-      setIsTyping(true)
-      timeout = setTimeout(() => {
-        setIsTyping(false)
-        setMessages((prev) => [...prev, currentScenario.messages[index]])
-        timeout = setTimeout(() => addMessage(index + 1), 1500)
-      }, 1000)
+      const msg = currentScenario.messages[index]
+      if (msg.sender === 'friend') {
+        setIsTyping(true)
+        timeout = setTimeout(() => {
+          setIsTyping(false)
+          setMessages((prev) => [...prev, msg])
+          timeout = setTimeout(() => addMessage(index + 1), 1600)
+        }, 1100)
+      } else {
+        timeout = setTimeout(() => {
+          setMessages((prev) => [...prev, msg])
+          timeout = setTimeout(() => addMessage(index + 1), 1300)
+        }, 300)
+      }
     }
 
     addMessage(0)
     return () => clearTimeout(timeout)
-  }, [scenarioIndex])
+  }, [currentScenario.messages])
 
   return (
-    <div className="w-full h-full flex flex-col bg-[var(--bg)] font-mono">
+    <div className="w-full h-full flex flex-col bg-[rgba(15,15,26,0.8)] backdrop-blur-2xl overflow-hidden border border-white/10 shadow-2xl">
       {/* Chat Header */}
-      <div className="p-3 border-b-2 border-[var(--border)] flex justify-between items-center bg-[var(--text)] text-[var(--bg)]">
-        <div className="flex flex-col">
-          <span className="text-[10px] uppercase font-bold opacity-50">{currentScenario.type}</span>
-          <span className="text-xs font-black uppercase tracking-tighter">{currentScenario.name}</span>
+      <div className="p-4 px-6 flex justify-between items-center border-b border-white/5 bg-white/2">
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-full bg-gradient-to-tr from-[var(--accent)] to-[var(--secondary-accent)] flex items-center justify-center text-[#08080f] font-bold text-sm">
+            SM
+          </div>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{currentScenario.type}</span>
+            <div className="flex items-center gap-1.5">
+              <div className="size-1.5 rounded-full bg-[var(--accent-green)]" />
+              <span className="text-[10px] text-[var(--accent-green)] font-medium">Online now</span>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-1">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+        <div className="flex gap-3">
+           <div className="size-8 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+              <Phone className="size-3.5 text-[var(--text-muted)]" />
+           </div>
+           <div className="size-8 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+              <Video className="size-3.5 text-[var(--text-muted)]" />
+           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden space-y-3 p-4">
+      <div className="flex-1 overflow-y-auto space-y-3 p-5 flex flex-col scrollbar-hide">
         <AnimatePresence>
           {messages.map((msg) => (
             <motion.div
               key={msg.id}
-              initial={{ opacity: 0, x: msg.sender === 'me' ? 20 : -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.85, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className="flex flex-col gap-1">
-                {msg.name && <span className="text-[8px] uppercase font-bold opacity-50">{msg.name}</span>}
-                <div
-                  className={`px-3 py-1.5 border-2 border-[var(--border)] text-xs sm:text-sm ${
-                    msg.sender === 'me' ? 'bg-[var(--text)] text-[var(--bg)]' : 'bg-[var(--bg)] text-[var(--text)]'
-                  }`}
-                >
-                  {msg.text}
-                </div>
+              <div
+                className={`px-4 py-2.5 text-[13.5px] leading-relaxed shadow-sm ${
+                  msg.sender === 'me' 
+                    ? 'bg-[var(--accent)] text-[#08080f] rounded-[18px] rounded-br-[4px] font-medium' 
+                    : 'bg-[var(--surface)] text-[var(--text)] rounded-[18px] rounded-bl-[4px] border border-white/5'
+                }`}
+              >
+                {msg.text}
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
         {isTyping && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-            <div className="px-3 py-1.5 border-2 border-[var(--border)] bg-[var(--bg)] text-xs italic">
-              typing...
+            <div className="px-4 py-3 bg-[var(--surface)] rounded-[18px] rounded-bl-[4px] border border-white/5 flex gap-1.5 items-center">
+              <div className="size-1.5 rounded-full bg-[var(--text-muted)] animate-bounce" />
+              <div className="size-1.5 rounded-full bg-[var(--text-muted)] animate-bounce [animation-delay:0.2s]" />
+              <div className="size-1.5 rounded-full bg-[var(--text-muted)] animate-bounce [animation-delay:0.4s]" />
             </div>
           </motion.div>
         )}
       </div>
-      <div className="mt-auto p-3 border-t-2 border-[var(--border)] flex items-center justify-between bg-[var(--bg)]">
-        <span className="text-[10px] uppercase tracking-widest font-bold">Live Demo</span>
-        <div className="flex gap-1">
-          <div className="w-2 h-2 rounded-full bg-[var(--text)] animate-pulse" />
-          <div className="w-2 h-2 rounded-full bg-[var(--text)] animate-pulse delay-75" />
-          <div className="w-2 h-2 rounded-full bg-[var(--text)] animate-pulse delay-150" />
+      
+      <div className="p-4 px-6 border-t border-white/5 flex items-center gap-3 bg-white/1">
+        <div className="flex-1 h-10 bg-[var(--surface)] rounded-full border border-white/5" />
+        <div className="size-10 bg-[var(--accent)] rounded-full flex items-center justify-center text-[#08080f] shadow-lg shadow-indigo-500/20">
+          <Rocket className="size-4" />
         </div>
       </div>
     </div>
@@ -185,107 +126,139 @@ function ChatDemo() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] font-sans flex flex-col relative overflow-x-hidden">
-      {/* Dot Grid Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.05]" 
-           style={{ backgroundImage: 'radial-gradient(var(--text) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-x-hidden selection:bg-[var(--accent)] selection:text-[#08080f]">
+      {/* Dynamic Background */}
+      <div className="grid-bg" />
+      <div className="orb w-[500px] h-[500px] bg-[rgba(167,139,250,0.12)] top-[-200px] right-[-100px]" />
+      <div className="orb w-[400px] h-[400px] bg-[rgba(244,114,182,0.08)] bottom-0 left-[-100px]" />
+      <div className="orb w-[300px] h-[300px] bg-[rgba(52,211,153,0.06)] top-[40%] left-[30%]" />
       
       <Navbar />
       
-      <Marquee text="Instant Messaging • End-to-End Encryption • Global Community • Simple UI • No Tracking" />
+      <div className="mt-20">
+         <Marquee text="End-to-End Encrypted • Lightning Fast • No Tracking Ever • Global Community • Beautiful Design • Free Forever" />
+      </div>
 
-      <div className='w-full flex justify-center py-10 px-4 relative z-10'>
-        <div className='container max-w-5xl h-[75vh] border-2 border-[var(--border)] flex flex-col md:flex-row overflow-hidden bg-[var(--bg)] shadow-[12px_12px_0px_0px_var(--border)]'>
-          <div className='logoAndIntro w-full md:w-1/2 h-1/2 md:h-full flex flex-col items-center justify-center p-8 border-b-2 md:border-b-0 md:border-r-2 border-[var(--border)] relative overflow-hidden group'>
+      <main className='w-full flex flex-col items-center py-20 px-4 relative z-10'>
+        <div className='container max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'>
+          <div className='space-y-8 text-center lg:text-left'>
             <motion.div 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              className="space-y-4 text-center"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(167,139,250,0.07)] border border-[rgba(167,139,250,0.3)] text-xs font-semibold text-[var(--accent)]"
             >
-              <h1 className='text-8xl font-black tracking-tighter leading-[0.8] flex flex-col items-center'>
-                {["CHAT", "APP"].map((word, i) => (
-                  <motion.span 
-                    key={i}
-                    initial={{ x: -100, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="hover:italic transition-all duration-300 cursor-default"
-                  >
-                    {word}
-                  </motion.span>
-                ))}
-              </h1>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-                className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] border-t-2 border-[var(--border)] pt-4 inline-block"
-              >
-                Simple • Secure • Fast
-              </motion.p>
+              <div className="size-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
+              <span>Now in open beta</span>
             </motion.div>
             
-            {/* Corner Accent */}
-            <div className="absolute top-0 right-0 w-12 h-12 border-b-2 border-l-2 border-[var(--border)] flex items-center justify-center bg-red-600 text-white text-[8px] font-black uppercase rotate-45 translate-x-6 -translate-y-6">
-              New
+            <h1 className='text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95]'>
+              Chat that hits<br />
+              <span className="text-[var(--accent)]">different.</span>
+            </h1>
+            
+            <p className="text-xl text-[var(--text-muted)] max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
+              Secure, fast, and actually good-looking. No cringe UI, no ads, no data selling. Just pure connection.
+            </p>
+            
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-4">
+              <Link to="/signup" className="btn-primary flex items-center gap-2 group">
+                Get started — it's free
+                <Rocket className="size-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link to="/about" className="btn-ghost">
+                See how it works
+              </Link>
+            </div>
+            
+            <div className="flex items-center gap-6 justify-center lg:justify-start pt-8 border-t border-[var(--border)]">
+              <div className="flex -space-x-2.5">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="size-9 rounded-full border-2 border-[var(--bg)] bg-[var(--surface)] overflow-hidden flex items-center justify-center text-[10px] font-bold text-[var(--text-muted)]">
+                    {['SJ', 'MK', 'AZ', 'RB'][i-1]}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm font-light text-[var(--text-muted)]">
+                Joined by <span className="text-[var(--text)] font-semibold">10,000+</span> people worldwide
+              </p>
             </div>
           </div>
           
-          <div className="demo w-full md:w-1/2 h-1/2 md:h-full bg-[var(--bg)] relative">
-             {/* Abstract Lines */}
-             <div className="absolute inset-0 pointer-events-none opacity-5">
-               <div className="absolute top-0 left-1/4 w-px h-full bg-[var(--text)]" />
-               <div className="absolute top-1/4 left-0 w-full h-px bg-[var(--text)]" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
+          >
+             {/* Abstract Glow for Demo */}
+             <div className="absolute inset-0 bg-[var(--accent)] opacity-5 blur-[100px] rounded-full -z-10" />
+             
+             {/* Floating Badges */}
+             <motion.div 
+               animate={{ y: [0, -10, 0] }}
+               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute -top-6 -right-10 px-4 py-3 glass rounded-2xl shadow-2xl flex items-center gap-3 hidden md:flex"
+             >
+               <div className="size-8 rounded-lg bg-[rgba(52,211,153,0.12)] flex items-center justify-center text-[var(--accent-green)] text-sm">
+                 🔒
+               </div>
+               <div>
+                 <p className="text-[11px] font-bold">E2E Encrypted</p>
+                 <p className="text-[9px] text-[var(--text-muted)]">Always secure</p>
+               </div>
+             </motion.div>
+
+             <motion.div 
+               animate={{ y: [0, 10, 0] }}
+               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+               className="absolute bottom-20 -left-10 px-4 py-3 glass rounded-2xl shadow-2xl flex items-center gap-3 hidden md:flex"
+             >
+               <div className="size-8 rounded-lg bg-[rgba(167,139,250,0.12)] flex items-center justify-center text-[var(--accent)] text-sm">
+                 ⚡
+               </div>
+               <div>
+                 <p className="text-[11px] font-bold">&lt; 50ms latency</p>
+                 <p className="text-[9px] text-[var(--text-muted)]">Instant delivery</p>
+               </div>
+             </motion.div>
+
+             <div className="max-w-[360px] mx-auto p-1 bg-white/5 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-2xl shadow-black/50">
+                <div className="h-[520px] w-full rounded-[1.8rem] overflow-hidden">
+                  <ChatDemo />
+                </div>
              </div>
-            <ChatDemo />
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </main>
 
       {/* Features Section */}
-      <section className="w-full flex justify-center py-20 px-4 border-t-2 border-[var(--border)]">
-        <div className="container max-w-5xl">
-          <h2 className="text-4xl font-black tracking-tighter mb-12 uppercase">Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 border-t-2 border-l-2 border-[var(--border)]">
-            {[
-              { title: "Encrypted", desc: "End-to-end security for your data." },
-              { title: "Real-time", desc: "Instant messaging without delays." },
-              { title: "Global", desc: "Connect with anyone, anywhere." },
-              { title: "Free", desc: "No hidden costs, just chatting." },
-              { title: "Simple", desc: "Minimalist UI for maximum focus." },
-              { title: "Fast", desc: "Optimized for speed and efficiency." },
-            ].map((f, i) => (
-              <div key={i} className="p-8 border-b-2 border-r-2 border-[var(--border)] hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors group">
-                <span className="text-xs font-mono mb-4 block opacity-50 group-hover:opacity-100">0{i + 1}</span>
-                <h3 className="text-xl font-bold mb-2 uppercase">{f.title}</h3>
-                <p className="text-sm opacity-70 group-hover:opacity-100">{f.desc}</p>
-              </div>
-            ))}
+      <section className="w-full flex justify-center py-32 px-4 relative z-10 border-t border-[var(--border)]">
+        <div className="container max-w-6xl">
+          <div className="text-left mb-20 max-w-2xl">
+            <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Why chatly?</p>
+            <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-none">Built different,<br />for real.</h2>
+            <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">Everything you'd want in a messaging app, nothing you wouldn't.</p>
           </div>
-        </div>
-      </section>
 
-      {/* How it Works */}
-      <section className="w-full flex justify-center py-20 px-4 bg-[var(--text)] text-[var(--bg)]">
-        <div className="container max-w-5xl">
-          <h2 className="text-4xl font-black tracking-tighter mb-12 uppercase text-[var(--bg)]">How it Works</h2>
-          <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              "Create an account in seconds.",
-              "Invite your friends via unique link.",
-              "Start chatting in real-time."
-            ].map((step, i) => (
+              { icon: "🔐", title: "Military-grade encryption", desc: "Every message, file, and call is end-to-end encrypted. Not opt-in — always on.", wide: true, color: "rgba(167,139,250,0.12)" },
+              { icon: "⚡", title: "Actually instant", desc: "Sub-50ms delivery on our global edge network. No lag, no buffering.", color: "rgba(52,211,153,0.12)" },
+              { icon: "✨", title: "UI that slaps", desc: "Designed from scratch to be genuinely beautiful. Dark mode that's actually dark.", color: "rgba(244,114,182,0.12)" },
+              { icon: "🌍", title: "Global by default", desc: "Servers across 40+ regions mean your messages travel the shortest path.", color: "rgba(96,165,250,0.12)" },
+              { icon: "❤️", title: "Free forever", desc: "Core features stay free. No ads, no data selling, no sketchy monetization.", color: "rgba(251,146,60,0.12)" },
+              { icon: "🚀", title: "Groups that work", desc: "Up to 500 people, threaded replies, reactions. Group chats that don't devolve.", color: "rgba(34,211,238,0.12)" },
+            ].map((f, i) => (
               <motion.div 
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="flex items-center gap-6 group"
+                key={i} 
+                whileHover={{ y: -5, borderColor: 'rgba(167,139,250,0.25)' }}
+                className={`p-8 bg-[var(--secondary-bg)] rounded-[2rem] border border-[var(--border)] shadow-sm transition-all ${f.wide ? 'md:col-span-2' : ''}`}
               >
-                <span className="text-5xl font-black text-[var(--bg)] opacity-20 group-hover:opacity-100 transition-colors">0{i + 1}</span>
-                <p className="text-2xl font-bold tracking-tight uppercase">{step}</p>
+                <div className="size-14 rounded-2xl flex items-center justify-center text-2xl mb-8" style={{ backgroundColor: f.color }}>
+                  {f.icon}
+                </div>
+                <h3 className="text-2xl font-bold mb-4 tracking-tight">{f.title}</h3>
+                <p className="text-[var(--text-muted)] leading-relaxed font-light">{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -293,36 +266,60 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="w-full flex justify-center py-20 px-4 border-t-2 border-[var(--border)]">
-        <div className="container max-w-5xl">
-          <h2 className="text-4xl font-black tracking-tighter mb-12 uppercase">Pricing</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="p-8 border-2 border-[var(--border)] flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_var(--border)] transition-all">
-              <div className="space-y-4">
-                <h3 className="text-2xl font-black uppercase">Basic</h3>
-                <p className="text-sm opacity-70 italic">For casual chatting.</p>
-                <div className="text-4xl font-black">$0<span className="text-sm">/mo</span></div>
-                <ul className="text-sm space-y-2 border-t-2 border-[var(--border)] pt-4">
-                  <li>— Unlimited messages</li>
-                  <li>— 100MB file storage</li>
-                  <li>— Group chats</li>
+      <section className="w-full flex justify-center py-32 px-4 relative z-10 border-t border-[var(--border)]">
+        <div className="container max-w-6xl">
+          <div className="text-center mb-20">
+            <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Pricing</p>
+            <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">Simple pricing,<br />no cap.</h2>
+            <p className="text-xl text-[var(--text-muted)] font-light">Pick what works for you. Upgrade anytime, no questions asked.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="p-12 bg-[var(--secondary-bg)] rounded-[2.5rem] border border-[var(--border)] flex flex-col justify-between shadow-xl">
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-3xl font-bold tracking-tight">Basic</h3>
+                  <p className="text-sm text-[var(--text-muted)] mt-2 font-light">For casual chatting.</p>
+                </div>
+                <div className="text-6xl font-extrabold tracking-tighter">$0<span className="text-xl font-light text-[var(--text-muted)] tracking-normal ml-2">/mo</span></div>
+                <div className="h-px bg-[var(--border)]" />
+                <ul className="space-y-4">
+                  {["Unlimited messages", "100MB file storage", "Group chats up to 50", "E2E encryption"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm font-light">
+                      <div className="size-5 rounded-full bg-[rgba(52,211,153,0.15)] flex items-center justify-center text-[var(--accent-green)]">
+                        <Zap className="size-3" />
+                      </div>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
-              <button className="mt-8 w-full py-3 border-2 border-[var(--border)] font-bold uppercase hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors">Select</button>
+              <button className="mt-12 btn-ghost w-full">Get started free</button>
             </div>
-            <div className="p-8 border-2 border-[var(--border)] bg-[var(--text)] text-[var(--bg)] flex flex-col justify-between hover:shadow-[8px_8px_0px_0px_var(--accent)] transition-all">
-              <div className="space-y-4">
-                <h3 className="text-2xl font-black uppercase text-[var(--bg)]">Pro</h3>
-                <p className="text-sm opacity-70 italic">For power users.</p>
-                <div className="text-4xl font-black text-[var(--bg)]">$10<span className="text-sm">/mo</span></div>
-                <ul className="text-sm space-y-2 border-t-2 border-[var(--bg)] opacity-30 pt-4">
-                  <li>— Everything in Basic</li>
-                  <li>— 10GB file storage</li>
-                  <li>— Custom themes</li>
-                  <li>— Priority support</li>
+
+            <div className="p-12 bg-[var(--surface)] rounded-[2.5rem] border border-[rgba(167,139,250,0.3)] flex flex-col justify-between shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-6">
+                 <div className="px-4 py-1.5 bg-[var(--accent)] text-[#08080f] rounded-full text-[10px] font-bold uppercase tracking-widest">Most Popular ✦</div>
+              </div>
+              <div className="space-y-8 relative z-10">
+                <div>
+                  <h3 className="text-3xl font-bold tracking-tight">Pro</h3>
+                  <p className="text-sm text-[var(--text-muted)] mt-2 font-light">For power users.</p>
+                </div>
+                <div className="text-6xl font-extrabold tracking-tighter text-[var(--accent)]">$10<span className="text-xl font-light text-[var(--text-muted)] tracking-normal ml-2">/mo</span></div>
+                <div className="h-px bg-[var(--border)]" />
+                <ul className="space-y-4">
+                  {["Everything in Basic", "10GB file storage", "Groups up to 500", "Custom themes", "Priority support"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-3 text-sm font-light">
+                      <div className="size-5 rounded-full bg-[var(--accent)] flex items-center justify-center text-[#08080f]">
+                        <Zap className="size-3" />
+                      </div>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
-              <button className="mt-8 w-full py-3 bg-red-600 text-white font-bold uppercase hover:bg-[var(--bg)] hover:text-red-600 border-2 border-red-600 transition-colors shadow-[4px_4px_0px_0px_var(--bg)]">Select</button>
+              <button className="mt-12 btn-primary w-full text-base">Upgrade to Pro</button>
             </div>
           </div>
         </div>

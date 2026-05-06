@@ -1,17 +1,28 @@
 import { Link } from 'react-router-dom'
+import { MessageSquare } from 'lucide-react'
 
 export default function Footer() {
   return (
-    <footer className="w-full flex justify-center py-12 px-4 border-t-2 border-[var(--border)] bg-[var(--bg)]">
-      <div className="container max-w-5xl flex flex-col md:flex-row justify-between items-center gap-8">
-        <div className="text-xl font-black tracking-tighter">CHAT APP</div>
-        <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest">
-          <Link to="/privacy" className="hover:line-through">Privacy</Link>
-          <Link to="/terms" className="hover:line-through">Terms</Link>
-          <Link to="/contact" className="hover:line-through">Contact</Link>
+    <footer className="w-full flex justify-center py-20 px-4 relative z-10 border-t border-[var(--border)]">
+      <div className="container max-w-6xl flex flex-col md:flex-row justify-between items-center gap-12">
+        <div className="flex items-center gap-3">
+          <div className='p-2 bg-[var(--surface)] rounded-xl'>
+            <MessageSquare className='size-5 text-[var(--accent)]' />
+          </div>
+          <span className="text-xl font-bold tracking-tighter font-display">chatly✦</span>
         </div>
-        <div className="text-[10px] font-mono opacity-50">© 2026 CHAT APP INC.</div>
+        
+        <div className="flex gap-10 text-[13px] font-medium text-[var(--text-muted)]">
+          <Link to="/privacy" className="hover:text-[var(--text)] transition-colors">Privacy</Link>
+          <Link to="/terms" className="hover:text-[var(--text)] transition-colors">Terms</Link>
+          <Link to="/contact" className="hover:text-[var(--text)] transition-colors">Contact</Link>
+        </div>
+        
+        <div className="text-[12px] text-[var(--text-muted)] font-light">
+          © 2026 chatly. All rights reserved.
+        </div>
       </div>
     </footer>
   )
 }
+
