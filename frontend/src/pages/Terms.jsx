@@ -17,8 +17,8 @@ export default function Terms() {
           </div>
 
           <div className="space-y-6 pt-12 border-t border-[var(--border)]">
-            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
-              <div className="size-14 rounded-2xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-500 shrink-0">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-black/5">
+              <div className="size-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
                 <UserCheck className="size-7" />
               </div>
               <div className="space-y-2">
@@ -29,8 +29,8 @@ export default function Terms() {
               </div>
             </section>
 
-            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
-              <div className="size-14 rounded-2xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500 shrink-0">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-black/5">
+              <div className="size-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
                 <FileText className="size-7" />
               </div>
               <div className="space-y-2">
@@ -41,8 +41,8 @@ export default function Terms() {
               </div>
             </section>
 
-            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
-              <div className="size-14 rounded-2xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 shrink-0">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-black/5">
+              <div className="size-14 rounded-2xl bg-[var(--secondary-accent)]/10 flex items-center justify-center text-[var(--secondary-accent)] shrink-0">
                 <RefreshCw className="size-7" />
               </div>
               <div className="space-y-2">

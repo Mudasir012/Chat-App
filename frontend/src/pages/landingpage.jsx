@@ -57,11 +57,11 @@ function ChatDemo() {
   }, [currentScenario.messages])
 
   return (
-    <div className="w-full h-full flex flex-col bg-[rgba(15,15,26,0.8)] backdrop-blur-2xl overflow-hidden border border-white/10 shadow-2xl">
+    <div className="w-full h-full flex flex-col bg-[var(--bg)]/80 backdrop-blur-2xl overflow-hidden border border-[var(--border)] shadow-2xl">
       {/* Chat Header */}
-      <div className="p-4 px-6 flex justify-between items-center border-b border-white/5 bg-white/2">
+      <div className="p-4 px-6 flex justify-between items-center border-b border-[var(--border)] bg-[var(--secondary-bg)]/30">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-gradient-to-tr from-[var(--accent)] to-[var(--secondary-accent)] flex items-center justify-center text-[#08080f] font-bold text-sm">
+          <div className="size-10 rounded-full bg-gradient-to-tr from-[var(--accent)] to-[var(--secondary-accent)] flex items-center justify-center text-[var(--accent-content)] font-bold text-sm">
             SM
           </div>
           <div className="flex flex-col">
@@ -73,10 +73,10 @@ function ChatDemo() {
           </div>
         </div>
         <div className="flex gap-3">
-           <div className="size-8 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+           <div className="size-8 rounded-full bg-[var(--surface)]/50 flex items-center justify-center cursor-pointer hover:bg-[var(--surface)] transition-colors">
               <Phone className="size-3.5 text-[var(--text-muted)]" />
            </div>
-           <div className="size-8 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+           <div className="size-8 rounded-full bg-[var(--surface)]/50 flex items-center justify-center cursor-pointer hover:bg-[var(--surface)] transition-colors">
               <Video className="size-3.5 text-[var(--text-muted)]" />
            </div>
         </div>
@@ -94,8 +94,8 @@ function ChatDemo() {
               <div
                 className={`px-4 py-2.5 text-[13.5px] leading-relaxed shadow-sm ${
                   msg.sender === 'me' 
-                    ? 'bg-[var(--accent)] text-[#08080f] rounded-[18px] rounded-br-[4px] font-medium' 
-                    : 'bg-[var(--surface)] text-[var(--text)] rounded-[18px] rounded-bl-[4px] border border-white/5'
+                    ? 'bg-[var(--accent)] text-[var(--accent-content)] rounded-[18px] rounded-br-[4px] font-medium' 
+                    : 'bg-[var(--surface)] text-[var(--text)] rounded-[18px] rounded-bl-[4px] border border-[var(--border)]'
                 }`}
               >
                 {msg.text}
@@ -105,7 +105,7 @@ function ChatDemo() {
         </AnimatePresence>
         {isTyping && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-            <div className="px-4 py-3 bg-[var(--surface)] rounded-[18px] rounded-bl-[4px] border border-white/5 flex gap-1.5 items-center">
+            <div className="px-4 py-3 bg-[var(--surface)] rounded-[18px] rounded-bl-[4px] border border-[var(--border)] flex gap-1.5 items-center">
               <div className="size-1.5 rounded-full bg-[var(--text-muted)] animate-bounce" />
               <div className="size-1.5 rounded-full bg-[var(--text-muted)] animate-bounce [animation-delay:0.2s]" />
               <div className="size-1.5 rounded-full bg-[var(--text-muted)] animate-bounce [animation-delay:0.4s]" />
@@ -114,9 +114,9 @@ function ChatDemo() {
         )}
       </div>
       
-      <div className="p-4 px-6 border-t border-white/5 flex items-center gap-3 bg-white/1">
-        <div className="flex-1 h-10 bg-[var(--surface)] rounded-full border border-white/5" />
-        <div className="size-10 bg-[var(--accent)] rounded-full flex items-center justify-center text-[#08080f] shadow-lg shadow-indigo-500/20">
+      <div className="p-4 px-6 border-t border-[var(--border)] flex items-center gap-3 bg-[var(--secondary-bg)]/30">
+        <div className="flex-1 h-10 bg-[var(--surface)] rounded-full border border-[var(--border)]" />
+        <div className="size-10 bg-[var(--accent)] rounded-full flex items-center justify-center text-[var(--accent-content)] shadow-lg shadow-black/20">
           <Rocket className="size-4" />
         </div>
       </div>
@@ -126,12 +126,12 @@ function ChatDemo() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-x-hidden selection:bg-[var(--accent)] selection:text-[#08080f]">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-x-hidden selection:bg-[var(--accent)] selection:text-[var(--accent-content)]">
       {/* Dynamic Background */}
       <div className="grid-bg" />
-      <div className="orb w-[500px] h-[500px] bg-[rgba(167,139,250,0.12)] top-[-200px] right-[-100px]" />
-      <div className="orb w-[400px] h-[400px] bg-[rgba(244,114,182,0.08)] bottom-0 left-[-100px]" />
-      <div className="orb w-[300px] h-[300px] bg-[rgba(52,211,153,0.06)] top-[40%] left-[30%]" />
+      <div className="orb w-[500px] h-[500px] bg-[rgba(173,181,189,0.08)] top-[-200px] right-[-100px]" />
+      <div className="orb w-[400px] h-[400px] bg-[rgba(108,117,125,0.06)] bottom-0 left-[-100px]" />
+      <div className="orb w-[300px] h-[300px] bg-[rgba(248,249,250,0.04)] top-[40%] left-[30%]" />
       
       <Navbar />
       
@@ -145,7 +145,7 @@ export default function LandingPage() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(167,139,250,0.07)] border border-[rgba(167,139,250,0.3)] text-xs font-semibold text-[var(--accent)]"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(173,181,189,0.07)] border border-[rgba(173,181,189,0.3)] text-xs font-semibold text-[var(--accent)]"
             >
               <div className="size-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
               <span>Now in open beta</span>
@@ -199,7 +199,7 @@ export default function LandingPage() {
                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                className="absolute -top-6 -right-10 px-4 py-3 glass rounded-2xl shadow-2xl flex items-center gap-3 hidden md:flex"
              >
-               <div className="size-8 rounded-lg bg-[rgba(52,211,153,0.12)] flex items-center justify-center text-[var(--accent-green)] text-sm">
+               <div className="size-8 rounded-lg bg-[rgba(173,181,189,0.12)] flex items-center justify-center text-[var(--accent-green)] text-sm">
                  🔒
                </div>
                <div>
@@ -213,7 +213,7 @@ export default function LandingPage() {
                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                className="absolute bottom-20 -left-10 px-4 py-3 glass rounded-2xl shadow-2xl flex items-center gap-3 hidden md:flex"
              >
-               <div className="size-8 rounded-lg bg-[rgba(167,139,250,0.12)] flex items-center justify-center text-[var(--accent)] text-sm">
+               <div className="size-8 rounded-lg bg-[rgba(108,117,125,0.12)] flex items-center justify-center text-[var(--accent)] text-sm">
                  ⚡
                </div>
                <div>
@@ -222,7 +222,7 @@ export default function LandingPage() {
                </div>
              </motion.div>
 
-             <div className="max-w-[360px] mx-auto p-1 bg-white/5 backdrop-blur-2xl rounded-[2rem] border border-white/10 shadow-2xl shadow-black/50">
+             <div className="max-w-[360px] mx-auto p-1 bg-[var(--secondary-bg)]/50 backdrop-blur-2xl rounded-[2rem] border border-[var(--border)] shadow-2xl shadow-black/50">
                 <div className="h-[520px] w-full rounded-[1.8rem] overflow-hidden">
                   <ChatDemo />
                 </div>
@@ -242,16 +242,16 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: "🔐", title: "Military-grade encryption", desc: "Every message, file, and call is end-to-end encrypted. Not opt-in — always on.", wide: true, color: "rgba(167,139,250,0.12)" },
-              { icon: "⚡", title: "Actually instant", desc: "Sub-50ms delivery on our global edge network. No lag, no buffering.", color: "rgba(52,211,153,0.12)" },
-              { icon: "✨", title: "UI that slaps", desc: "Designed from scratch to be genuinely beautiful. Dark mode that's actually dark.", color: "rgba(244,114,182,0.12)" },
-              { icon: "🌍", title: "Global by default", desc: "Servers across 40+ regions mean your messages travel the shortest path.", color: "rgba(96,165,250,0.12)" },
-              { icon: "❤️", title: "Free forever", desc: "Core features stay free. No ads, no data selling, no sketchy monetization.", color: "rgba(251,146,60,0.12)" },
-              { icon: "🚀", title: "Groups that work", desc: "Up to 500 people, threaded replies, reactions. Group chats that don't devolve.", color: "rgba(34,211,238,0.12)" },
+              { icon: "🔐", title: "End-to-End encryption", desc: "Every message, file, and call is end-to-end encrypted. Not opt-in — always on.", wide: true, color: "rgba(173,181,189,0.12)" },
+              { icon: "⚡", title: "Actually instant", desc: "Sub-50ms delivery on our global edge network. No lag, no buffering.", color: "rgba(108,117,125,0.12)" },
+              { icon: "✨", title: "UI that slaps", desc: "Designed from scratch to be genuinely beautiful. Dark mode that's actually dark.", color: "rgba(73,80,87,0.12)" },
+              { icon: "🌍", title: "Global by default", desc: "Servers across 40+ regions mean your messages travel the shortest path.", color: "rgba(248,249,250,0.12)" },
+              { icon: "❤️", title: "Free forever", desc: "Core features stay free. No ads, no data selling, no sketchy monetization.", color: "rgba(173,181,189,0.12)" },
+              { icon: "🚀", title: "Groups that work", desc: "Up to 500 people, threaded replies, reactions. Group chats that don't devolve.", color: "rgba(108,117,125,0.12)" },
             ].map((f, i) => (
               <motion.div 
                 key={i} 
-                whileHover={{ y: -5, borderColor: 'rgba(167,139,250,0.25)' }}
+                whileHover={{ y: -5, borderColor: 'rgba(173,181,189,0.25)' }}
                 className={`p-8 bg-[var(--secondary-bg)] rounded-[2rem] border border-[var(--border)] shadow-sm transition-all ${f.wide ? 'md:col-span-2' : ''}`}
               >
                 <div className="size-14 rounded-2xl flex items-center justify-center text-2xl mb-8" style={{ backgroundColor: f.color }}>
@@ -286,7 +286,7 @@ export default function LandingPage() {
                 <ul className="space-y-4">
                   {["Unlimited messages", "100MB file storage", "Group chats up to 50", "E2E encryption"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm font-light">
-                      <div className="size-5 rounded-full bg-[rgba(52,211,153,0.15)] flex items-center justify-center text-[var(--accent-green)]">
+                      <div className="size-5 rounded-full bg-[rgba(173,181,189,0.15)] flex items-center justify-center text-[var(--accent-green)]">
                         <Zap className="size-3" />
                       </div>
                       {item}
@@ -297,9 +297,9 @@ export default function LandingPage() {
               <button className="mt-12 btn-ghost w-full">Get started free</button>
             </div>
 
-            <div className="p-12 bg-[var(--surface)] rounded-[2.5rem] border border-[rgba(167,139,250,0.3)] flex flex-col justify-between shadow-2xl relative overflow-hidden">
+            <div className="p-12 bg-[var(--surface)] rounded-[2.5rem] border border-[rgba(173,181,189,0.3)] flex flex-col justify-between shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 p-6">
-                 <div className="px-4 py-1.5 bg-[var(--accent)] text-[#08080f] rounded-full text-[10px] font-bold uppercase tracking-widest">Most Popular ✦</div>
+                 <div className="px-4 py-1.5 bg-[var(--accent)] text-[#212529] rounded-full text-[10px] font-bold uppercase tracking-widest">Most Popular ✦</div>
               </div>
               <div className="space-y-8 relative z-10">
                 <div>
@@ -311,7 +311,7 @@ export default function LandingPage() {
                 <ul className="space-y-4">
                   {["Everything in Basic", "10GB file storage", "Groups up to 500", "Custom themes", "Priority support"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-sm font-light">
-                      <div className="size-5 rounded-full bg-[var(--accent)] flex items-center justify-center text-[#08080f]">
+                      <div className="size-5 rounded-full bg-[var(--accent)] flex items-center justify-center text-[#212529]">
                         <Zap className="size-3" />
                       </div>
                       {item}

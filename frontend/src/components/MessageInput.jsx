@@ -9,7 +9,7 @@ const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { sendMessage, selectedUser } = useChatStore();
+  const { sendMessage, selectedUser, sendTyping } = useChatStore();
   const { authUser } = useAuthStore();
 
   const handleImageChange = (e) => {
@@ -29,6 +29,13 @@ const MessageInput = () => {
   const removeImage = () => {
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleTextChange = (e) => {
+    setText(e.target.value);
+    if (selectedUser && !selectedUser.isMock) {
+      sendTyping(selectedUser._id);
+    }
   };
 
   const handleSendMessage = async (e) => {
@@ -65,7 +72,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 px-6 w-full bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-[var(--border)]">
+    <div className="p-4 px-6 w-full bg-[var(--bg)]/50 backdrop-blur-md border-t border-[var(--border)]">
       {imagePreview && (
         <div className="mb-4 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
           <div className="relative group">
@@ -94,15 +101,15 @@ const MessageInput = () => {
           >
             <Paperclip size={20} />
           </button>
-          
+
           <input
             type="text"
             className="flex-1 bg-transparent py-2 text-sm focus:outline-none"
             placeholder="Type a message..."
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={handleTextChange}
           />
-          
+
           <button
             type="button"
             className="p-2 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors hidden sm:block"
@@ -118,10 +125,10 @@ const MessageInput = () => {
             onChange={handleImageChange}
           />
         </div>
-        
+
         <button
           type="submit"
-          className="size-12 bg-[var(--accent)] text-white rounded-full flex items-center justify-center hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:shadow-none active:scale-90"
+          className="size-12 bg-[var(--accent)] text-[var(--accent-content)] rounded-full flex items-center justify-center hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-black/20 disabled:opacity-50 disabled:shadow-none active:scale-90"
           disabled={!text.trim() && !imagePreview}
         >
           <Send size={20} className={text.trim() || imagePreview ? "translate-x-0.5 -translate-y-0.5" : ""} />

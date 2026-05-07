@@ -38,7 +38,7 @@ export default function Contact() {
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-1 gap-8">
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="size-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-[var(--accent)] shadow-sm">
+                  <div className="size-12 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shadow-sm">
                     <Mail className="size-6" />
                   </div>
                   <div className="text-left">
@@ -47,16 +47,16 @@ export default function Contact() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="size-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 shadow-sm">
+                  <div className="size-12 rounded-2xl bg-[var(--secondary-accent)]/10 flex items-center justify-center text-[var(--secondary-accent)] shadow-sm">
                     <Send className="size-6" />
                   </div>
                   <div className="text-left">
                     <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Follow us</p>
-                    <p className="text-lg font-bold hover:text-blue-500 transition-colors cursor-pointer">@chatapp_hq</p>
+                    <p className="text-lg font-bold hover:text-[var(--secondary-accent)] transition-colors cursor-pointer">@chatapp_hq</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4 justify-center lg:justify-start">
-                  <div className="size-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[var(--text-muted)] shadow-sm">
+                  <div className="size-12 rounded-2xl bg-[var(--surface)] flex items-center justify-center text-[var(--text-muted)] shadow-sm">
                     <MapPin className="size-6" />
                   </div>
                   <div className="text-left">
@@ -70,7 +70,7 @@ export default function Contact() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-8 md:p-10 card-curvy shadow-2xl shadow-indigo-500/5 space-y-8"
+              className="p-8 md:p-10 card-curvy shadow-2xl shadow-black/5 space-y-8"
             >
               <h2 className="text-2xl font-bold tracking-tight">Drop us a line</h2>
               <form className="space-y-6">

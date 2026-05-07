@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 import { Loader2, Mail, Lock, User, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -26,12 +26,19 @@ export default function SignUp() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const success = validateForm();
 
-    if (success === true) signup(formData);
+    if (success === true) {
+      const result = await signup(formData);
+      if (result?.success) {
+        navigate("/verify-email");
+      }
+    }
   };
 
   return (
@@ -47,10 +54,10 @@ export default function SignUp() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-indigo-500/5"
+          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-black/5"
         >
           <div className="space-y-3 text-center mb-10">
-            <div className="size-16 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg shadow-indigo-500/20 mb-6">
+            <div className="size-16 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-[#212529] mx-auto shadow-lg shadow-black/20 mb-6">
               <UserPlus className="size-8" />
             </div>
             <h1 className="text-3xl font-bold tracking-tight">Create Account</h1>

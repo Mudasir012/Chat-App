@@ -69,6 +69,37 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  markAsRead: async (messageId) => {
+    try {
+      await axiosInstance.post(`/messages/mark-read/${messageId}`);
+      set({
+        messages: get().messages.map((m) =>
+          m._id === messageId ? { ...m, isRead: true } : m
+        ),
+      });
+    } catch (error) {
+      console.log("Error in markAsRead:", error);
+    }
+  },
+
+  addReaction: async (messageId, emoji) => {
+    try {
+      const res = await axiosInstance.post(`/messages/react/${messageId}`, { emoji });
+      set({
+        messages: get().messages.map((m) =>
+          m._id === messageId ? res.data : m
+        ),
+      });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  sendTyping: (receiverId) => {
+    const socket = useAuthStore.getState().socket;
+    if (socket) socket.emit("typing", { to: receiverId });
+  },
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
@@ -83,13 +114,39 @@ export const useChatStore = create((set, get) => ({
         messages: [...get().messages, newMessage],
       });
     });
+
+    socket.on("messageReaction", ({ messageId, userId, emoji }) => {
+      set({
+        messages: get().messages.map((m) =>
+          m._id === messageId
+            ? {
+                ...m,
+                reactions: [
+                  ...m.reactions.filter((r) => r.userId !== userId),
+                  { userId, emoji },
+                ],
+              }
+            : m
+        ),
+      });
+    });
+
+    socket.on("userTyping", ({ from }) => {
+      if (selectedUser._id === from) {
+        set({ isTyping: true });
+        setTimeout(() => set({ isTyping: false }), 3000);
+      }
+    });
   },
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     socket.off("newMessage");
+    socket.off("messageReaction");
+    socket.off("userTyping");
   },
 
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setSelectedUser: (selectedUser) => set({ selectedUser, isTyping: false }),
   setMessages: (messages) => set({ messages }),
+  isTyping: false,
 }));

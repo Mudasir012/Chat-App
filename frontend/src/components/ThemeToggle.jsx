@@ -1,21 +1,14 @@
-import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useThemeStore } from '../store/useThemeStore'
 
 export default function ThemeToggle() {
-  const [isDark, setIsDark] = useState(false)
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [isDark])
+  const { theme, setTheme } = useThemeStore()
+  const isDark = theme === 'dark'
 
   return (
     <button
-      onClick={() => setIsDark(!isDark)}
-      className="relative w-12 h-12 border-2 border-[var(--border)] flex items-center justify-center overflow-hidden hover:bg-[var(--text)] hover:text-[var(--bg)] transition-all group"
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="relative size-10 rounded-xl border border-[var(--border)] flex items-center justify-center overflow-hidden hover:bg-[var(--accent)] hover:text-[#212529] transition-all group active:scale-90"
     >
       <AnimatePresence mode="wait">
         {isDark ? (

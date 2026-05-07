@@ -1,31 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;1,9..40,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&display=swap');
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --bg: #08080f;
-    --secondary-bg: #0f0f1a;
-    --surface: #161625;
-    --text: #f1f0ff;
-    --text-muted: rgba(241,240,255,0.45);
-    --border: rgba(255, 255, 255, 0.08);
-    --accent: #a78bfa;
-    --accent-hover: #8b5cf6;
-    --secondary-accent: #f472b6;
-    --accent-green: #34d399;
+    --bg: #212529;
+    --secondary-bg: #343A40;
+    --surface: #495057;
+    --text: #F8F9FA;
+    --text-muted: #ADB5BD;
+    --border: rgba(248, 249, 250, 0.08);
+    --accent: #CED4DA;
+    --accent-hover: #F8F9FA;
+    --accent-content: #212529;
+    --secondary-accent: #6C757D;
     --radius: 1.75rem;
     --font-display: 'Bricolage Grotesque', sans-serif;
     --font-body: 'DM Sans', sans-serif;
-  }
-
-  .dark {
-    /* Same as root for now as requested a specific dark professional look */
-    --bg: #08080f;
-    --secondary-bg: #0f0f1a;
-    --surface: #161625;
-    --text: #f1f0ff;
-    --text-muted: rgba(241,240,255,0.45);
-    --border: rgba(255, 255, 255, 0.08);
   }
 
   html, body {
@@ -38,6 +28,8 @@
 
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   * {
@@ -51,7 +43,7 @@
 
   ::selection {
     background-color: var(--accent);
-    color: #08080f;
+    color: var(--accent-content);
   }
 
   /* Custom Scrollbar */
@@ -69,10 +61,10 @@
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+    background: var(--accent);
   }
 
-  /* Animations from reference */
+  /* Animations */
   @keyframes ticker {
     from { transform: translateX(0); }
     to { transform: translateX(-50%); }
@@ -85,13 +77,13 @@
 
   @keyframes pulse-subtle {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.9); }
+    50% { opacity: 0.5; transform: scale(0.95); }
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-8 py-3.5 bg-[var(--accent)] text-[#08080f] rounded-full font-bold hover:translate-y-[-2px] active:scale-95 transition-all shadow-[0_0_20px_rgba(167,139,250,0.3)] hover:shadow-[0_0_35px_rgba(167,139,250,0.5)];
+    @apply px-8 py-3.5 bg-[var(--accent)] text-[var(--accent-content)] rounded-full font-bold hover:translate-y-[-2px] active:scale-95 transition-all shadow-[0_0_20px_rgba(206,212,218,0.2)] hover:bg-[var(--accent-hover)] hover:shadow-[0_0_35px_rgba(206,212,218,0.4)];
   }
 
   .btn-ghost {
@@ -99,7 +91,7 @@
   }
   
   .glass {
-    @apply backdrop-blur-xl bg-[rgba(15,15,26,0.7)] border border-[var(--border)];
+    @apply backdrop-blur-xl bg-[rgba(33,37,41,0.7)] border border-[var(--border)];
   }
 
   .card-curvy {
@@ -108,8 +100,8 @@
 
   .grid-bg {
     @apply fixed inset-0 pointer-events-none z-0;
-    background-image: linear-gradient(rgba(167,139,250,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(167,139,250,0.03) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(248,249,250,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(248,249,250,0.03) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 

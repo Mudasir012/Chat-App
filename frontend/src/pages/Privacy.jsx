@@ -17,8 +17,8 @@ export default function Privacy() {
           </div>
 
           <div className="space-y-6 pt-12 border-t border-[var(--border)]">
-            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
-              <div className="size-14 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 shrink-0">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-black/5">
+              <div className="size-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
                 <ShieldCheck className="size-7" />
               </div>
               <div className="space-y-2">
@@ -29,8 +29,8 @@ export default function Privacy() {
               </div>
             </section>
 
-            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
-              <div className="size-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-[var(--accent)] shrink-0">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-black/5">
+              <div className="size-14 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] shrink-0">
                 <Lock className="size-7" />
               </div>
               <div className="space-y-2">
@@ -41,8 +41,8 @@ export default function Privacy() {
               </div>
             </section>
 
-            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-indigo-500/5">
-              <div className="size-14 rounded-2xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-[var(--secondary-accent)] shrink-0">
+            <section className="p-8 rounded-[2rem] bg-[var(--secondary-bg)] border border-[var(--border)] flex flex-col md:flex-row gap-6 transition-all hover:shadow-lg hover:shadow-black/5">
+              <div className="size-14 rounded-2xl bg-[var(--secondary-accent)]/10 flex items-center justify-center text-[var(--secondary-accent)] shrink-0">
                 <EyeOff className="size-7" />
               </div>
               <div className="space-y-2">

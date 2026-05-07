@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 import { Loader2, Mail, Lock, LogIn } from 'lucide-react'
 
@@ -13,9 +13,14 @@ export default function SignIn() {
   });
   const { login, isLoggingIn } = useAuthStore();
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(formData);
+    const result = await login(formData);
+    if (result?.needsVerification) {
+      navigate("/verify-email");
+    }
   };
 
   return (
@@ -31,10 +36,10 @@ export default function SignIn() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-indigo-500/5"
+          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-black/5"
         >
           <div className="space-y-3 text-center mb-10">
-            <div className="size-16 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg shadow-indigo-500/20 mb-6">
+            <div className="size-16 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-[#212529] mx-auto shadow-lg shadow-black/20 mb-6">
               <LogIn className="size-8" />
             </div>
             <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
@@ -67,6 +72,11 @@ export default function SignIn() {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               />
+              <div className="text-right">
+                <Link to="/forgot-password" size="sm" className="text-sm text-[var(--accent)] font-semibold hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
             <button 
               type="submit" 

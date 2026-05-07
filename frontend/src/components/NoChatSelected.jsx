@@ -5,8 +5,8 @@ const NoChatSelected = () => {
     <div className="w-full flex flex-1 flex-col items-center justify-center p-16 bg-[var(--bg)] relative overflow-hidden">
       {/* Decorative elements */}
       <div className="grid-bg opacity-30" />
-      <div className="orb w-64 h-64 bg-[rgba(167,139,250,0.05)] top-1/4 right-1/4" style={{ animationDelay: '0s' }} />
-      <div className="orb w-48 h-48 bg-[rgba(244,114,182,0.03)] bottom-1/4 left-1/4" style={{ animationDelay: '-2s' }} />
+      <div className="orb w-64 h-64 bg-[rgba(173,181,189,0.05)] top-1/4 right-1/4" style={{ animationDelay: '0s' }} />
+      <div className="orb w-48 h-48 bg-[rgba(108,117,125,0.03)] bottom-1/4 left-1/4" style={{ animationDelay: '-2s' }} />
 
       <div className="max-w-md text-center space-y-8 relative z-10">
         {/* Icon Display */}
@@ -14,11 +14,11 @@ const NoChatSelected = () => {
           <div className="relative group">
             <div
               className="size-24 rounded-[2rem] bg-[var(--accent)] flex items-center
-             justify-center shadow-2xl shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-500"
+             justify-center shadow-2xl shadow-black/30 group-hover:scale-110 transition-transform duration-500"
             >
-              <MessageSquare className="size-10 text-[#08080f]" />
+              <MessageSquare className="size-10 text-[#212529]" />
             </div>
-            <div className="absolute -bottom-2 -right-2 size-8 bg-[var(--secondary-accent)] rounded-xl shadow-lg flex items-center justify-center text-slate-900 border-4 border-[var(--bg)]">
+            <div className="absolute -bottom-2 -right-2 size-8 bg-[var(--secondary-accent)] rounded-xl shadow-lg flex items-center justify-center text-[#F8F9FA] border-4 border-[var(--bg)]">
               <Sparkles className="size-4" />
             </div>
           </div>

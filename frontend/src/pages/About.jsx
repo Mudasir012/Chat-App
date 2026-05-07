@@ -39,7 +39,7 @@ export default function About() {
 
           <section className="grid md:grid-cols-2 gap-12 pt-12 border-t border-[var(--border)]">
             <div className="space-y-6">
-              <div className="size-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-[var(--accent)]">
+              <div className="size-12 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)]">
                 <Users className="size-6" />
               </div>
               <h2 className="text-2xl font-bold tracking-tight">The Team</h2>
@@ -49,7 +49,7 @@ export default function About() {
               </p>
             </div>
             <div className="space-y-6">
-              <div className="size-12 rounded-2xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-[var(--secondary-accent)]">
+              <div className="size-12 rounded-2xl bg-[var(--secondary-accent)]/10 flex items-center justify-center text-[var(--secondary-accent)]">
                 <Code className="size-6" />
               </div>
               <h2 className="text-2xl font-bold tracking-tight">The Tech</h2>
@@ -60,21 +60,21 @@ export default function About() {
             </div>
           </section>
 
-          <section className="p-10 md:p-16 rounded-[3rem] bg-slate-900 text-white relative overflow-hidden shadow-2xl group">
+          <section className="p-10 md:p-16 rounded-[3rem] bg-[var(--secondary-bg)] text-[var(--text)] relative overflow-hidden shadow-2xl group border border-[var(--border)]">
             <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:opacity-40 transition-opacity">
               <Zap className="size-32" />
             </div>
             <div className="relative z-10 space-y-8">
               <h2 className="text-4xl font-bold tracking-tight">Ready to join the revolution?</h2>
-              <p className="max-w-xl text-slate-400 text-lg leading-relaxed">
+              <p className="max-w-xl text-[var(--text-muted)] text-lg leading-relaxed">
                 Start chatting with a platform that respects your time and your data. 
                 No ads, no tracking, just pure connection.
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
-                <Link to="/signup" className="px-8 py-3 bg-[var(--accent)] text-white font-bold rounded-full hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-indigo-500/30">
+                <Link to="/signup" className="px-8 py-3 bg-[var(--accent)] text-[#212529] font-bold rounded-full hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-black/30">
                   Get Started for Free
                 </Link>
-                <Link to="/contact" className="px-8 py-3 bg-white/10 text-white font-bold rounded-full hover:bg-white/20 transition-all backdrop-blur-sm">
+                <Link to="/contact" className="px-8 py-3 bg-white/5 text-[var(--text)] font-bold rounded-full hover:bg-white/10 transition-all backdrop-blur-sm border border-[var(--border)]">
                   Contact Support
                 </Link>
               </div>

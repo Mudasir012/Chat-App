@@ -7,7 +7,16 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
-    const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
+    const user = await User.findById(loggedInUserId);
+    const blockedUsers = user.blockedUsers || [];
+
+    const filteredUsers = await User.find({
+      $and: [
+        { _id: { $ne: loggedInUserId } },
+        { _id: { $nin: blockedUsers } },
+        { blockedUsers: { $ne: loggedInUserId } },
+      ],
+    }).select("-password");
 
     res.status(200).json(filteredUsers);
   } catch (error) {
@@ -29,8 +38,65 @@ export const getMessages = async (req, res) => {
     });
 
     res.status(200).json(messages);
+
+    // Mark messages as read
+    await Message.updateMany(
+      { senderId: userToChatId, receiverId: myId, isRead: false },
+      { $set: { isRead: true } }
+    );
   } catch (error) {
     console.log("Error in getMessages controller: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const markAsRead = async (req, res) => {
+  try {
+    const { id: messageId } = req.params;
+    const userId = req.user._id;
+
+    const message = await Message.findById(messageId);
+    if (!message) return res.status(404).json({ message: "Message not found" });
+
+    if (message.receiverId.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    message.isRead = true;
+    await message.save();
+
+    res.status(200).json(message);
+  } catch (error) {
+    console.log("Error in markAsRead controller: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const addReaction = async (req, res) => {
+  try {
+    const { id: messageId } = req.params;
+    const { emoji } = req.body;
+    const userId = req.user._id;
+
+    const message = await Message.findById(messageId);
+    if (!message) return res.status(404).json({ message: "Message not found" });
+
+    // Remove existing reaction from this user if any
+    message.reactions = message.reactions.filter((r) => r.userId.toString() !== userId.toString());
+
+    message.reactions.push({ userId, emoji });
+    await message.save();
+
+    // Notify other user via socket
+    const otherUserId = message.senderId.toString() === userId.toString() ? message.receiverId : message.senderId;
+    const receiverSocketId = getReceiverSocketId(otherUserId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("messageReaction", { messageId, userId, emoji });
+    }
+
+    res.status(200).json(message);
+  } catch (error) {
+    console.log("Error in addReaction controller: ", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -40,6 +106,17 @@ export const sendMessage = async (req, res) => {
     const { text, image } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
+
+    // Check if blocked
+    const sender = await User.findById(senderId);
+    const receiver = await User.findById(receiverId);
+
+    if (sender.blockedUsers.includes(receiverId)) {
+      return res.status(400).json({ message: "You have blocked this user" });
+    }
+    if (receiver.blockedUsers.includes(senderId)) {
+      return res.status(400).json({ message: "This user has blocked you" });
+    }
 
     let imageUrl;
     if (image) {
