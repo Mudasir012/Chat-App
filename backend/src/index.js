@@ -22,7 +22,9 @@ const __dirname = path.resolve();
 app.use(express.json({ limit: '10mb' })); // support larger image uploads
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173", "https://plavox.vercel.app", process.env.FRONTEND_URL],
+    origin: (origin, callback) => {
+        callback(null, true);
+    },
     credentials: true
 }));
 
