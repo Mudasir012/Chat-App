@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import Pusher from "pusher-js";
 
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : (import.meta.env.VITE_BACKEND_URL || "");
+const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "https://chat-app-git-main-mudasir012s-projects.vercel.app";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
