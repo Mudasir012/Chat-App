@@ -30,7 +30,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/calls", callRoutes);
-
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });

@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useAuthStore } from './store/useAuthStore'
 import { Loader } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
-
 import LandingPage from './pages/landingpage.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
