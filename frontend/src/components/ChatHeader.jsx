@@ -1,12 +1,25 @@
 import { X, MoreVertical, Phone, Video } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
 import { useCallStore } from "../store/useCallStore";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
-  const { onlineUsers, blockUser } = useAuthStore();
+  const { selectedUser, setSelectedUser, clearChat } = useChatStore();
+  const { onlineUsers, blockUser, reportUser } = useAuthStore();
   const { initCall } = useCallStore();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleBlock = async () => {
     if (window.confirm(`Are you sure you want to block ${selectedUser.fullName}?`)) {
@@ -15,15 +28,28 @@ const ChatHeader = () => {
     }
   };
 
-  const DEFAULT_AVATAR = "https://ui-avatars.com/api/?background=CED4DA&color=212529&name=";
+  const handleClearChat = async () => {
+    if (window.confirm("Are you sure you want to clear this chat? This action cannot be undone.")) {
+      await clearChat(selectedUser._id);
+    }
+  };
+
+  const handleReportUser = async () => {
+    const reason = window.prompt(`Please provide a reason for reporting ${selectedUser.fullName}:`);
+    if (reason) {
+      await reportUser(selectedUser._id, reason);
+    }
+  };
+
+  const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/fun-emoji/svg?seed=";
 
   return (
-    <div className="p-4 px-6 border-b border-[var(--border)] bg-[var(--bg)]/50 backdrop-blur-md">
+    <div className="py-1.5 px-6 border-b border-[var(--border)] bg-[var(--bg)]/50 backdrop-blur-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="relative">
-            <div className="size-10 rounded-2xl overflow-hidden ring-2 ring-[var(--accent)]/10 shadow-sm">
+            <div className="size-8 rounded-xl overflow-hidden ring-2 ring-[var(--accent)]/10 shadow-sm">
               <img 
                 src={selectedUser.profilePic || (DEFAULT_AVATAR + encodeURIComponent(selectedUser.fullName))} 
                 alt={selectedUser.fullName} 
@@ -37,36 +63,70 @@ const ChatHeader = () => {
 
           {/* User info */}
           <div>
-            <h3 className="font-bold text-sm tracking-tight">{selectedUser.fullName}</h3>
-            <p className={`text-[10px] font-semibold ${onlineUsers.includes(selectedUser._id) ? "text-green-500" : "text-[var(--text-muted)]"}`}>
+            <h3 className="font-bold text-xs tracking-tight">{selectedUser.fullName}</h3>
+            <p className={`text-[9px] font-semibold ${onlineUsers.includes(selectedUser._id) ? "text-green-500" : "text-[var(--text-muted)]"}`}>
               {onlineUsers.includes(selectedUser._id) ? "Online now" : "Offline"}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button 
-            onClick={() => initCall(selectedUser, "voice")}
-            className="p-2 text-[var(--text-muted)] hover:bg-[var(--secondary-bg)] hover:text-[var(--text)] rounded-xl transition-all hidden sm:block"
-          >
-            <Phone className="size-4" />
-          </button>
-          <button 
-            onClick={() => initCall(selectedUser, "video")}
-            className="p-2 text-[var(--text-muted)] hover:bg-[var(--secondary-bg)] hover:text-[var(--text)] rounded-xl transition-all hidden sm:block"
-          >
-            <Video className="size-4" />
-          </button>
           
-          <div className="dropdown dropdown-end">
-            <button tabIndex={0} className="p-2 text-[var(--text-muted)] hover:bg-[var(--secondary-bg)] hover:text-[var(--text)] rounded-xl transition-all">
+          <div className="relative" ref={menuRef}>
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={`p-2 rounded-xl transition-all ${isMenuOpen ? "bg-[var(--accent)]/10 text-[var(--accent)]" : "text-[var(--text-muted)] hover:bg-[var(--secondary-bg)] hover:text-[var(--text)]"}`}
+            >
               <MoreVertical className="size-4" />
             </button>
-            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-base-100 border-2 border-primary rounded-xl w-52 mt-2 font-bold uppercase text-xs">
-              <li><button onClick={handleBlock} className="text-red-600">Block User</button></li>
-              <li><button>Report User</button></li>
-              <li><button>Clear Chat</button></li>
-            </ul>
+            
+            {isMenuOpen && (
+              <ul className="absolute right-0 top-full z-[50] menu p-1.5 shadow-2xl bg-[var(--surface)] border border-[var(--border)] rounded-xl w-44 mt-2 font-bold uppercase text-[10px] tracking-widest animate-in fade-in zoom-in duration-200">
+                <li>
+                  <button 
+                    onClick={() => { initCall(selectedUser, "voice"); setIsMenuOpen(false); }} 
+                    className="hover:bg-[var(--secondary-bg)] py-2 flex items-center gap-2"
+                  >
+                    <Phone className="size-3.5" />
+                    Voice Call
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => { initCall(selectedUser, "video"); setIsMenuOpen(false); }} 
+                    className="hover:bg-[var(--secondary-bg)] py-2 flex items-center gap-2"
+                  >
+                    <Video className="size-3.5" />
+                    Video Call
+                  </button>
+                </li>
+                <div className="h-px bg-[var(--border)] my-1 mx-2" />
+                <li>
+                  <button 
+                    onClick={() => { handleReportUser(); setIsMenuOpen(false); }} 
+                    className="hover:bg-[var(--secondary-bg)] py-2"
+                  >
+                    Report User
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => { handleClearChat(); setIsMenuOpen(false); }} 
+                    className="hover:bg-[var(--secondary-bg)] py-2"
+                  >
+                    Clear Chat
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => { handleBlock(); setIsMenuOpen(false); }} 
+                    className="text-red-500 hover:bg-red-500/10 py-2 flex items-center gap-2"
+                  >
+                    Block User
+                  </button>
+                </li>
+              </ul>
+            )}
           </div>
 
           <div className="w-px h-6 bg-[var(--border)] mx-1" />

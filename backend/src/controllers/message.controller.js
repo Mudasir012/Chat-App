@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import Message from "../models/Message.js";
 
 import cloudinary from "../lib/cloudinary.js";
-import { getReceiverSocketId, io } from "../lib/socket.js";
+import { pusher } from "../lib/pusher.js";
 
 export const getUsersForSidebar = async (req, res) => {
   try {
@@ -87,12 +87,9 @@ export const addReaction = async (req, res) => {
     message.reactions.push({ userId, emoji });
     await message.save();
 
-    // Notify other user via socket
+    // Notify other user via Pusher
     const otherUserId = message.senderId.toString() === userId.toString() ? message.receiverId : message.senderId;
-    const receiverSocketId = getReceiverSocketId(otherUserId);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("messageReaction", { messageId, userId, emoji });
-    }
+    pusher.trigger(`private-user-${otherUserId}`, "messageReaction", { messageId, userId, emoji });
 
     res.status(200).json(message);
   } catch (error) {
@@ -134,14 +131,43 @@ export const sendMessage = async (req, res) => {
 
     await newMessage.save();
 
-    const receiverSocketId = getReceiverSocketId(receiverId);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage);
-    }
+    // Notify receiver via Pusher
+    pusher.trigger(`private-user-${receiverId}`, "newMessage", newMessage);
 
     res.status(201).json(newMessage);
   } catch (error) {
     console.log("Error in sendMessage controller: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const clearMessages = async (req, res) => {
+  try {
+    const { id: userToChatId } = req.params;
+    const myId = req.user._id;
+
+    await Message.deleteMany({
+      $or: [
+        { senderId: myId, receiverId: userToChatId },
+        { senderId: userToChatId, receiverId: myId },
+      ],
+    });
+
+    res.status(200).json({ message: "Chat cleared successfully" });
+  } catch (error) {
+    console.log("Error in clearMessages controller: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const sendTyping = async (req, res) => {
+  try {
+    const { id: receiverId } = req.params;
+    const myId = req.user._id;
+
+    pusher.trigger(`private-user-${receiverId}`, "userTyping", { from: myId });
+    res.status(200).json({ message: "Typing event sent" });
+  } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 };

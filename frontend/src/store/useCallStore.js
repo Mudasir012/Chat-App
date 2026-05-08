@@ -1,24 +1,19 @@
 import { create } from "zustand";
 import { useAuthStore } from "./useAuthStore";
+import { axiosInstance } from "../lib/axios";
 
 export const useCallStore = create((set, get) => ({
-  call: null, // { from, to, signal, type: 'video' | 'voice', status: 'offering' | 'ringing' | 'connected' }
-  localStream: null,
-  remoteStream: null,
+  call: null, // { from, to, roomId, type: 'video' | 'voice', status: 'offering' | 'ringing' | 'connected' }
 
   initCall: async (to, type = "video") => {
-    const { socket, authUser } = useAuthStore.getState();
-    if (!socket) return;
+    const { authUser } = useAuthStore.getState();
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: type === "video",
-        audio: true,
-      });
+      const roomId = `room_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      
+      set({ call: { to, type, roomId, status: "connected" } });
 
-      set({ localStream: stream, call: { to, type, status: "offering" } });
-
-      socket.emit("call:invite", {
+      await axiosInstance.post("/calls/invite", {
         to: to._id,
         from: {
           _id: authUser._id,
@@ -26,9 +21,10 @@ export const useCallStore = create((set, get) => ({
           profilePic: authUser.profilePic,
         },
         type,
+        roomId,
       });
     } catch (err) {
-      console.error("Failed to get local stream", err);
+      console.error("Failed to init call", err);
     }
   },
 
@@ -37,41 +33,30 @@ export const useCallStore = create((set, get) => ({
   },
 
   acceptCall: async () => {
-    const { socket, call } = get();
-    if (!socket || !call) return;
+    const { call } = get();
+    if (!call) return;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: call.type === "video",
-        audio: true,
-      });
-
-      set({ localStream: stream, call: { ...call, status: "connected" } });
-      socket.emit("call:accept", { to: call.from._id });
+      set({ call: { ...call, status: "connected" } });
+      await axiosInstance.post("/calls/accept", { to: call.from._id });
     } catch (err) {
-      console.error("Failed to get local stream for answer", err);
+      console.error("Failed to accept call", err);
     }
   },
 
   declineCall: () => {
-    const { socket, call } = get();
-    if (socket && call) {
-      socket.emit("call:decline", { to: call.from._id });
+    if (call) {
+      axiosInstance.post("/calls/decline", { to: call.from._id });
     }
     get().endCall();
   },
 
   endCall: () => {
-    const { localStream, socket, call } = get();
-    if (localStream) {
-      localStream.getTracks().forEach((track) => track.stop());
-    }
-    if (socket && call) {
+    const { call } = get();
+    if (call) {
       const targetId = call.from?._id || call.to?._id;
-      if (targetId) socket.emit("call:end", { to: targetId });
+      if (targetId) axiosInstance.post("/calls/end", { to: targetId });
     }
-    set({ call: null, localStream: null, remoteStream: null });
+    set({ call: null });
   },
-
-  setRemoteStream: (stream) => set({ remoteStream: stream }),
 }));

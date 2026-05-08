@@ -8,7 +8,11 @@ import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import { app, server } from "./lib/socket.js";
+import callRoutes from "./routes/call.routes.js";
+import { pusher } from "./lib/pusher.js";
+import { protectRoute } from "./middleware/auth.middleware.js";
+
+const app = express();
 
 dotenv.config();
 
@@ -25,6 +29,23 @@ app.use(cors({
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/calls", callRoutes);
+
+app.post("/api/pusher/auth", protectRoute, (req, res) => {
+  const socketId = req.body.socket_id;
+  const channel = req.body.channel_name;
+  
+  const presenceData = {
+    user_id: req.user._id.toString(),
+    user_info: {
+      fullName: req.user.fullName,
+      profilePic: req.user.profilePic,
+    },
+  };
+  
+  const authResponse = pusher.authorizeChannel(socketId, channel, presenceData);
+  res.send(authResponse);
+});
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
@@ -34,7 +55,14 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-server.listen(PORT, () => {
-  console.log("server is running on PORT:" + PORT);
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log("server is running on PORT:" + PORT);
+    connectDB();
+  });
+} else {
+  // Connect to DB for Vercel serverless functions
   connectDB();
-});
+}
+
+export default app;

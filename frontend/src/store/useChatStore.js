@@ -70,6 +70,16 @@ export const useChatStore = create((set, get) => ({
   },
 
   markAsRead: async (messageId) => {
+    // Skip API call for mock messages
+    if (messageId.startsWith("m")) {
+      set({
+        messages: get().messages.map((m) =>
+          m._id === messageId ? { ...m, isRead: true } : m
+        ),
+      });
+      return;
+    }
+
     try {
       await axiosInstance.post(`/messages/mark-read/${messageId}`);
       set({
@@ -83,6 +93,26 @@ export const useChatStore = create((set, get) => ({
   },
 
   addReaction: async (messageId, emoji) => {
+    const { authUser } = useAuthStore.getState();
+
+    // Handle mock messages
+    if (messageId.startsWith("m")) {
+      set({
+        messages: get().messages.map((m) =>
+          m._id === messageId
+            ? {
+                ...m,
+                reactions: [
+                  ...(m.reactions || []).filter((r) => r.userId !== authUser._id),
+                  { userId: authUser._id, emoji },
+                ],
+              }
+            : m
+        ),
+      });
+      return;
+    }
+
     try {
       const res = await axiosInstance.post(`/messages/react/${messageId}`, { emoji });
       set({
@@ -95,18 +125,24 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  sendTyping: (receiverId) => {
-    const socket = useAuthStore.getState().socket;
-    if (socket) socket.emit("typing", { to: receiverId });
+  sendTyping: async (receiverId) => {
+    try {
+      await axiosInstance.post(`/messages/typing/${receiverId}`);
+    } catch (error) {
+      console.log("Error in sendTyping:", error);
+    }
   },
 
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
 
-    const socket = useAuthStore.getState().socket;
+    const { authUser, pusher } = useAuthStore.getState();
+    if (!pusher) return;
 
-    socket.on("newMessage", (newMessage) => {
+    const userChannel = pusher.subscribe(`private-user-${authUser._id}`);
+
+    userChannel.bind("newMessage", (newMessage) => {
       const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
       if (!isMessageSentFromSelectedUser) return;
 
@@ -115,14 +151,14 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
-    socket.on("messageReaction", ({ messageId, userId, emoji }) => {
+    userChannel.bind("messageReaction", ({ messageId, userId, emoji }) => {
       set({
         messages: get().messages.map((m) =>
           m._id === messageId
             ? {
                 ...m,
                 reactions: [
-                  ...m.reactions.filter((r) => r.userId !== userId),
+                  ...(m.reactions || []).filter((r) => r.userId !== userId),
                   { userId, emoji },
                 ],
               }
@@ -131,22 +167,42 @@ export const useChatStore = create((set, get) => ({
       });
     });
 
-    socket.on("userTyping", ({ from }) => {
+    userChannel.bind("userTyping", ({ from }) => {
       if (selectedUser._id === from) {
         set({ isTyping: true });
-        setTimeout(() => set({ isTyping: false }), 3000);
+        if (get().typingTimeout) clearTimeout(get().typingTimeout);
+        const timeout = setTimeout(() => set({ isTyping: false }), 3000);
+        set({ typingTimeout: timeout });
       }
     });
   },
 
   unsubscribeFromMessages: () => {
-    const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
-    socket.off("messageReaction");
-    socket.off("userTyping");
+    const { authUser, pusher } = useAuthStore.getState();
+    if (!pusher) return;
+    const userChannel = pusher.subscribe(`private-user-${authUser._id}`);
+    userChannel.unbind("newMessage");
+    userChannel.unbind("messageReaction");
+    userChannel.unbind("userTyping");
+  },
+
+  clearChat: async (userId) => {
+    if (userId.startsWith("mock-")) {
+      set({ messages: [] });
+      toast.success("Mock chat cleared locally");
+      return;
+    }
+    try {
+      await axiosInstance.post(`/messages/clear/${userId}`);
+      set({ messages: [] });
+      toast.success("Chat cleared");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser, isTyping: false }),
   setMessages: (messages) => set({ messages }),
   isTyping: false,
+  typingTimeout: null,
 }));

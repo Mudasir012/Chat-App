@@ -1,4 +1,30 @@
 import User from "../models/User.js";
+import Report from "../models/Report.js";
+
+export const reportUser = async (req, res) => {
+  try {
+    const { id: reportedUserId } = req.params;
+    const { reason } = req.body;
+    const reporterId = req.user._id;
+
+    if (!reason) {
+      return res.status(400).json({ message: "Reason is required" });
+    }
+
+    const report = new Report({
+      reporterId,
+      reportedUserId,
+      reason,
+    });
+
+    await report.save();
+
+    res.status(201).json({ message: "User reported successfully" });
+  } catch (error) {
+    console.error("Error in reportUser: ", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const searchUsers = async (req, res) => {
   try {

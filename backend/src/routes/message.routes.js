@@ -6,6 +6,8 @@ import {
   sendMessage,
   markAsRead,
   addReaction,
+  clearMessages,
+  sendTyping,
 } from "../controllers/message.controller.js";
 
 const router = express.Router();
@@ -16,5 +18,7 @@ router.get("/:id", protectRoute, getMessages);
 router.post("/send/:id", protectRoute, sendMessage);
 router.post("/mark-read/:id", protectRoute, markAsRead);
 router.post("/react/:id", protectRoute, addReaction);
+router.post("/clear/:id", protectRoute, clearMessages);
+router.post("/typing/:id", protectRoute, sendTyping);
 
 export default router;

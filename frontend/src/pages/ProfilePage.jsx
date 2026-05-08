@@ -45,7 +45,7 @@ const ProfilePage = () => {
           <div className="flex flex-col items-center gap-6">
             <div className="relative group">
               <img
-                src={selectedImg || authUser.profilePic || "/avatar.png"}
+                src={selectedImg || authUser.profilePic || `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(authUser.fullName || "")}`}
                 alt="Profile"
                 className="size-36 object-cover rounded-[2.5rem] border-4 border-[var(--bg)] shadow-2xl transition-transform duration-300 group-hover:scale-[1.02]"
               />

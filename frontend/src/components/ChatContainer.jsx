@@ -73,8 +73,8 @@ const ChatContainer = () => {
               <div
                 className={`
                   p-5 rounded-[var(--radius)] shadow-sm transition-all relative
-                  ${message.senderId === authUser._id 
-                    ? "bg-[var(--accent)] text-[var(--accent-content)] rounded-tr-none shadow-[0_4px_20px_rgba(206,212,218,0.15)]" 
+                  ${message.senderId === authUser._id
+                    ? "bg-[var(--accent)] text-[var(--accent-content)] rounded-tr-none shadow-[0_4px_20px_rgba(206,212,218,0.15)]"
                     : "bg-[var(--secondary-bg)] text-[var(--text)] rounded-tl-none border border-[var(--border)]"}
                 `}
                 onDoubleClick={() => addReaction(message._id, "❤️")}
@@ -87,7 +87,7 @@ const ChatContainer = () => {
                   />
                 )}
                 {message.text && <p className="text-sm leading-relaxed font-medium">{message.text}</p>}
-                
+
                 <div className="flex items-center justify-end gap-1.5 mt-2 opacity-60">
                   <span className={`text-[10px] font-bold uppercase tracking-wider ${message.senderId === authUser._id ? "text-[var(--accent-content)]" : "text-[var(--text-muted)]"}`}>
                     {format(new Date(message.createdAt), "HH:mm")}
@@ -109,15 +109,15 @@ const ChatContainer = () => {
             </div>
           </div>
         ))}
-        
+
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-[var(--secondary-bg)] p-4 rounded-[var(--radius)] rounded-tl-none border border-[var(--border)]">
-               <div className="flex gap-1.5">
-                  <span className="size-1.5 bg-[var(--text-muted)] rounded-full animate-bounce"></span>
-                  <span className="size-1.5 bg-[var(--text-muted)] rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                  <span className="size-1.5 bg-[var(--text-muted)] rounded-full animate-bounce [animation-delay:0.4s]"></span>
-               </div>
+              <div className="flex gap-1.5">
+                <span className="size-1.5 bg-[var(--text-muted)] rounded-full animate-bounce"></span>
+                <span className="size-1.5 bg-[var(--text-muted)] rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                <span className="size-1.5 bg-[var(--text-muted)] rounded-full animate-bounce [animation-delay:0.4s]"></span>
+              </div>
             </div>
           </div>
         )}

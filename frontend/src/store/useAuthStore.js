@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
-import { io } from "socket.io-client";
+import Pusher from "pusher-js";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
@@ -12,14 +12,14 @@ export const useAuthStore = create((set, get) => ({
   isUpdatingProfile: false,
   isCheckingAuth: true,
   onlineUsers: [],
-  socket: null,
+  pusher: null,
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
 
       set({ authUser: res.data });
-      get().connectSocket();
+      get().connectPusher();
     } catch (error) {
       console.log("Error in checkAuth:", error);
       set({ authUser: null });
@@ -47,7 +47,7 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/verify-email", { code });
       set({ authUser: res.data });
       toast.success("Email verified successfully");
-      get().connectSocket();
+      get().connectPusher();
       return true;
     } catch (error) {
       toast.error(error.response.data.message);
@@ -62,7 +62,7 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       toast.success("Logged in successfully");
 
-      get().connectSocket();
+      get().connectPusher();
     } catch (error) {
       if (error.response?.data?.needsVerification) {
         toast.error("Please verify your email");
@@ -79,7 +79,7 @@ export const useAuthStore = create((set, get) => ({
       await axiosInstance.post("/auth/logout");
       set({ authUser: null });
       toast.success("Logged out successfully");
-      get().disconnectSocket();
+      get().disconnectPusher();
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
@@ -131,9 +131,24 @@ export const useAuthStore = create((set, get) => ({
 
   blockUser: async (userId) => {
     try {
-      await axiosInstance.post(`/users/block/${userId}`);
+      const res = await axiosInstance.post(`/users/block/${userId}`);
       toast.success("User blocked");
-      // Update local state if needed
+      // Refresh authUser to get updated blockedUsers list
+      const authRes = await axiosInstance.get("/auth/check");
+      set({ authUser: authRes.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  },
+
+  reportUser: async (userId, reason) => {
+    if (userId.startsWith("mock-")) {
+      toast.success("Mock report submitted locally");
+      return;
+    }
+    try {
+      await axiosInstance.post(`/users/report/${userId}`, { reason });
+      toast.success("Report submitted successfully");
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -143,6 +158,9 @@ export const useAuthStore = create((set, get) => ({
     try {
       await axiosInstance.post(`/users/unblock/${userId}`);
       toast.success("User unblocked");
+      // Refresh authUser
+      const authRes = await axiosInstance.get("/auth/check");
+      set({ authUser: authRes.data });
     } catch (error) {
       toast.error(error.response.data.message);
     }
@@ -158,40 +176,62 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  connectSocket: () => {
+  connectPusher: () => {
     const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
+    if (!authUser || get().pusher) return;
 
-    const socket = io(BASE_URL, {
-      query: {
-        userId: authUser._id,
+    const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
+      cluster: import.meta.env.VITE_PUSHER_CLUSTER,
+      authEndpoint: `${BASE_URL}/api/pusher/auth`,
+      auth: {
+        withCredentials: true,
       },
     });
-    socket.connect();
 
-    set({ socket: socket });
+    set({ pusher });
 
-    socket.on("getOnlineUsers", (userIds) => {
+    // Presence channel for online users
+    const channel = pusher.subscribe("presence-online-users");
+
+    channel.bind("pusher:subscription_succeeded", (members) => {
+      const userIds = [];
+      members.each((member) => userIds.push(member.id));
       set({ onlineUsers: userIds });
     });
 
-    socket.on("call:invite", (data) => {
+    channel.bind("pusher:member_added", (member) => {
+      set({ onlineUsers: [...get().onlineUsers, member.id] });
+    });
+
+    channel.bind("pusher:member_removed", (member) => {
+      set({ onlineUsers: get().onlineUsers.filter((id) => id !== member.id) });
+    });
+
+    // Listen for personal notifications on a private channel
+    const userChannel = pusher.subscribe(`private-user-${authUser._id}`);
+
+    userChannel.bind("call:invite", (data) => {
       import("./useCallStore").then((mod) => mod.useCallStore.getState().receiveCall(data));
     });
 
-    socket.on("call:accepted", (data) => {
+    userChannel.bind("call:accepted", (data) => {
       import("./useCallStore").then((mod) => mod.useCallStore.getState().set({ status: "connected" }));
     });
 
-    socket.on("call:declined", () => {
+    userChannel.bind("call:declined", () => {
       import("./useCallStore").then((mod) => mod.useCallStore.getState().endCall());
     });
 
-    socket.on("call:ended", () => {
+    userChannel.bind("call:ended", () => {
       import("./useCallStore").then((mod) => mod.useCallStore.getState().endCall());
     });
   },
-  disconnectSocket: () => {
-    if (get().socket?.connected) get().socket.disconnect();
+
+  disconnectPusher: () => {
+    const { pusher } = get();
+    if (pusher) {
+      pusher.disconnect();
+      set({ pusher: null });
+    }
   },
 }));

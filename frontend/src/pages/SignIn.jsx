@@ -33,7 +33,7 @@ export default function SignIn() {
 
       <Navbar />
       <main className="flex-1 w-full flex items-center justify-center py-20 px-4">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-black/5"
@@ -45,16 +45,16 @@ export default function SignIn() {
             <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
             <p className="text-sm text-[var(--text-muted)]">Sign in to your ChatApp account</p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
                 <Mail className="size-4" />
                 Email
               </label>
-              <input 
-                type="email" 
-                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
+              <input
+                type="email"
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -65,9 +65,9 @@ export default function SignIn() {
                 <Lock className="size-4" />
                 Password
               </label>
-              <input 
-                type="password" 
-                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
+              <input
+                type="password"
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -78,8 +78,8 @@ export default function SignIn() {
                 </Link>
               </div>
             </div>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isLoggingIn}
               className="btn-primary w-full py-4 text-base mt-4 flex items-center justify-center gap-2"
             >

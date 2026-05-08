@@ -36,11 +36,10 @@ const Sidebar = () => {
     ? displayUsers.filter((user) => onlineUsers.includes(user._id))
     : displayUsers;
 
-  const DEFAULT_AVATAR = "https://ui-avatars.com/api/?background=CED4DA&color=212529&name=";
+  const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/fun-emoji/svg?seed=";
 
   if (isUsersLoading) return <div className="h-full w-20 lg:w-80 bg-[var(--secondary-bg)] border-r border-[var(--border)]" />;
 
-  return (
   return (
     <aside className="h-full w-20 lg:w-80 flex flex-col glass border-r border-[var(--border)] transition-all duration-300 relative z-20">
       <div className="p-6 border-b border-[var(--border)] space-y-6">
@@ -55,13 +54,13 @@ const Sidebar = () => {
             {onlineUsers.length - 1} online
           </span>
         </div>
-        
+
         {/* Search Bar */}
         <div className="relative group hidden lg:block">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-[var(--text-muted)] group-focus-within:text-[var(--accent)] transition-colors" />
-          <input 
-            type="text" 
-            placeholder="Search users..." 
+          <input
+            type="text"
+            placeholder="Search users..."
             className="w-full bg-[var(--bg)]/50 border border-[var(--border)] rounded-[var(--radius)] py-3 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all font-medium"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
@@ -71,15 +70,15 @@ const Sidebar = () => {
         {/* Action Buttons */}
         <div className="flex items-center gap-2 hidden lg:flex">
           <button className="flex-1 bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] p-2.5 rounded-[1rem] transition-all group flex items-center justify-center gap-2">
-             <Plus className="size-4 text-[var(--text-muted)] group-hover:text-[var(--accent)]" />
-             <span className="text-[11px] font-bold text-[var(--text-muted)] group-hover:text-[var(--text)] uppercase tracking-wider">Group</span>
+            <Plus className="size-4 text-[var(--text-muted)] group-hover:text-[var(--accent)]" />
+            <span className="text-[11px] font-bold text-[var(--text-muted)] group-hover:text-[var(--text)] uppercase tracking-wider">Group</span>
           </button>
           <button className="flex-1 bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] p-2.5 rounded-[1rem] transition-all group flex items-center justify-center gap-2">
-             <Hash className="size-4 text-[var(--text-muted)] group-hover:text-[var(--accent)]" />
-             <span className="text-[11px] font-bold text-[var(--text-muted)] group-hover:text-[var(--text)] uppercase tracking-wider">Room</span>
+            <Hash className="size-4 text-[var(--text-muted)] group-hover:text-[var(--accent)]" />
+            <span className="text-[11px] font-bold text-[var(--text-muted)] group-hover:text-[var(--text)] uppercase tracking-wider">Room</span>
           </button>
           <button className="size-10 bg-[var(--accent)] text-[var(--accent-content)] rounded-[1rem] flex items-center justify-center hover:bg-[var(--accent-hover)] transition-all shadow-lg shadow-black/10">
-             <UserPlus className="size-4" />
+            <UserPlus className="size-4" />
           </button>
         </div>
 
@@ -138,7 +137,7 @@ const Sidebar = () => {
         {filteredUsers.length === 0 && (
           <div className="text-center py-20 px-4">
             <div className="size-16 bg-[var(--surface)] rounded-[var(--radius)] flex items-center justify-center mx-auto mb-4 opacity-50">
-               <Users className="size-8 text-[var(--text-muted)]" />
+              <Users className="size-8 text-[var(--text-muted)]" />
             </div>
             <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest">No users found</p>
           </div>
