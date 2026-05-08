@@ -31,6 +31,11 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/calls", callRoutes);
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
+
 app.post("/api/pusher/auth", protectRoute, (req, res) => {
   const socketId = req.body.socket_id;
   const channel = req.body.channel_name;
