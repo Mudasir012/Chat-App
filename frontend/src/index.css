@@ -9,10 +9,10 @@
     --text: #F8F9FA;
     --text-muted: #ADB5BD;
     --border: rgba(248, 249, 250, 0.08);
-    --accent: #CED4DA;
-    --accent-hover: #F8F9FA;
-    --accent-content: #212529;
-    --secondary-accent: #6C757D;
+    --accent: #3B82F6;
+    --accent-hover: #60A5FA;
+    --accent-content: #FFFFFF;
+    --secondary-accent: #38BDF8;
     --radius: 1.75rem;
     --font-display: 'Bricolage Grotesque', sans-serif;
     --font-body: 'DM Sans', sans-serif;
