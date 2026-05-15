@@ -4,13 +4,14 @@ import Footer from '../components/Footer'
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
-import { Loader2, Mail, Lock, LogIn } from 'lucide-react'
+import { Loader2, Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react'
 
 export default function SignIn() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const { login, isLoggingIn } = useAuthStore();
 
   const navigate = useNavigate();
@@ -65,13 +66,22 @@ export default function SignIn() {
                 <Lock className="size-4" />
                 Password
               </label>
-              <input
-                type="password"
-                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm"
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 pr-11 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
+                </button>
+              </div>
               <div className="text-right">
                 <Link to="/forgot-password" size="sm" className="text-sm text-[var(--accent)] font-semibold hover:underline">
                   Forgot password?

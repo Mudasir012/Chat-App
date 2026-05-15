@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
-import { Loader2, Mail, Lock, User, UserPlus } from 'lucide-react'
+import { Loader2, Mail, Lock, User, UserPlus, Eye, EyeOff } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function SignUp() {
@@ -13,6 +13,7 @@ export default function SignUp() {
     email: "",
     password: "",
   })
+  const [showPassword, setShowPassword] = useState(false)
 
   const { signup, isSigningUp } = useAuthStore()
 
@@ -96,13 +97,22 @@ export default function SignUp() {
                 <Lock className="size-4" />
                 Password
               </label>
-              <input 
-                type="password" 
-                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              />
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 pr-11 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm" 
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer"
+                >
+                  {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
+                </button>
+              </div>
             </div>
             <button 
               type="submit" 
