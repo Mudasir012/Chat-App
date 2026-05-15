@@ -26,7 +26,7 @@ const NoChatSelected = () => {
 
         {/* Welcome Text */}
         <div className="space-y-4">
-          <h2 className="text-5xl font-extrabold tracking-tighter font-display">Welcome to chatly✦</h2>
+          <h2 className="text-5xl font-extrabold tracking-tighter font-display">Welcome to Plavox✦</h2>
           <p className="text-[var(--text-muted)] text-base font-light leading-relaxed max-w-sm mx-auto">
             Select a conversation from the sidebar to start chatting. Secure, fast, and built for everyone.
           </p>

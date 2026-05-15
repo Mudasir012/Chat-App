@@ -14,7 +14,7 @@ export default function Navbar({ isCompact }) {
         <div className={`bg-[var(--accent)] rounded-[1rem] transition-all ${isCompact ? "p-1.5" : "p-2.5"} shadow-lg shadow-black/10`}>
           <MessageSquare className={`${isCompact ? "size-4" : "size-5"} text-[var(--accent-content)]`} />
         </div>
-        <Link to="/" className={`${isCompact ? "text-xl" : "text-2xl"} font-extrabold tracking-tighter hover:text-[var(--accent)] transition-all font-display`}>chatly✦</Link>
+        <Link to="/" className={`${isCompact ? "text-xl" : "text-2xl"} font-extrabold tracking-tighter hover:text-[var(--accent)] transition-all font-display`}>Plavox✦</Link>
       </nav>
 
       {!authUser && (

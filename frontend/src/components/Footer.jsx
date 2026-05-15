@@ -9,7 +9,7 @@ export default function Footer() {
           <div className='p-2 bg-[var(--surface)] rounded-xl'>
             <MessageSquare className='size-5 text-[var(--accent)]' />
           </div>
-          <span className="text-xl font-bold tracking-tighter font-display">chatly✦</span>
+          <span className="text-xl font-bold tracking-tighter font-display">Plavox✦</span>
         </div>
         
         <div className="flex gap-10 text-[13px] font-medium text-[var(--text-muted)]">
@@ -19,7 +19,7 @@ export default function Footer() {
         </div>
         
         <div className="text-[12px] text-[var(--text-muted)] font-light">
-          © 2026 chatly. All rights reserved.
+          © 2026 Plavox. All rights reserved.
         </div>
       </div>
     </footer>

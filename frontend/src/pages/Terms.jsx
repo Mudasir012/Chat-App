@@ -13,7 +13,7 @@ export default function Terms() {
         <div className="container max-w-3xl space-y-12">
           <div className="space-y-4 text-center md:text-left">
             <h1 className="text-6xl font-bold tracking-tight">Terms of Service</h1>
-            <p className="text-lg text-[var(--text-muted)]">Please read these terms carefully before using ChatApp.</p>
+            <p className="text-lg text-[var(--text-muted)]">Please read these terms carefully before using Plavox.</p>
           </div>
 
           <div className="space-y-6 pt-12 border-t border-[var(--border)]">

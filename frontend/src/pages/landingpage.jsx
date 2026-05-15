@@ -235,7 +235,7 @@ export default function LandingPage() {
       <section className="w-full flex justify-center py-32 px-4 relative z-10 border-t border-[var(--border)]">
         <div className="container max-w-6xl">
           <div className="text-left mb-20 max-w-2xl">
-            <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Why chatly?</p>
+            <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Why Plavox?</p>
             <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-none">Built different,<br />for real.</h2>
             <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">Everything you'd want in a messaging app, nothing you wouldn't.</p>
           </div>

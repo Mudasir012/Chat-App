@@ -20,7 +20,7 @@ export default function About() {
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--secondary-bg)] border border-[var(--border)] text-xs font-semibold text-[var(--accent)]"
             >
               <Sparkles className="size-3.5" />
-              <span>About ChatApp</span>
+              <span>About Plavox</span>
             </motion.div>
             
             <motion.h1 

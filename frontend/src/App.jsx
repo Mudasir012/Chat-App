@@ -6,8 +6,7 @@ import { Toaster } from 'react-hot-toast'
 import LandingPage from './pages/landingpage.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
-import SignIn from './pages/SignIn.jsx'
-import SignUp from './pages/SignUp.jsx'
+import AuthPage from './pages/AuthPage.jsx'
 import Privacy from './pages/Privacy.jsx'
 import Terms from './pages/Terms.jsx'
 import HomePage from './pages/HomePage.jsx'
@@ -47,8 +46,9 @@ function App() {
             <Route path="/" element={authUser ? <HomePage /> : <LandingPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/signin" element={!authUser ? <SignIn /> : <Navigate to="/" />} />
-            <Route path="/signup" element={!authUser ? <SignUp /> : <Navigate to="/" />} />
+            <Route path="/auth" element={!authUser ? <AuthPage /> : <Navigate to="/" />} />
+            <Route path="/signin" element={<Navigate to="/auth" />} />
+            <Route path="/signup" element={<Navigate to="/auth" />} />
             <Route path="/verify-email" element={!authUser ? <VerifyEmail /> : <Navigate to="/" />} />
             <Route path="/forgot-password" element={!authUser ? <ForgotPassword /> : <Navigate to="/" />} />
             <Route path="/reset-password/:token" element={!authUser ? <ResetPassword /> : <Navigate to="/" />} />
