@@ -22,18 +22,15 @@ const __dirname = path.resolve();
 
 app.use(express.json({ limit: '10mb' })); // support larger image uploads
 app.use(cookieParser());
-app.use((req, res, next) => {
-    const origin = req.headers.origin || "*";
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
-    
-    if (req.method === "OPTIONS") {
-        return res.status(200).end();
-    }
-    next();
-});
+
+const corsOptions = {
+  origin: process.env.CLIENT_URL || true,
+  credentials: true,
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+};
+
+app.use(cors(corsOptions));
 
 app.use("/api/auth", ensureDbConnected, authRoutes);
 app.use("/api/messages", ensureDbConnected, messageRoutes);
