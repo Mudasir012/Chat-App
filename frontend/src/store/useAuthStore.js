@@ -20,17 +20,16 @@ export const useAuthStore = create(
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data });
+      set({ authUser: res.data, isCheckingAuth: false });
       get().connectPusher();
     } catch (error) {
       console.log("Error in checkAuth:", error);
-      // Only clear auth if explicitly unauthenticated (401)
-      // Keep persisted state for network errors / cold starts
       if (error.response?.status === 401) {
-        set({ authUser: null });
+        set({ authUser: null, isCheckingAuth: false });
+      } else {
+        // Network error / cold start: trust persisted authUser
+        set({ isCheckingAuth: false });
       }
-    } finally {
-      set({ isCheckingAuth: false });
     }
   },
 
@@ -244,6 +243,14 @@ export const useAuthStore = create(
     {
       name: "plavox-auth-storage",
       partialize: (state) => ({ authUser: state.authUser }),
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error("Failed to rehydrate auth state:", error);
+          state?.set({ isCheckingAuth: false });
+        } else if (state?.authUser) {
+          state.set({ isCheckingAuth: false });
+        }
+      },
     }
   )
 );

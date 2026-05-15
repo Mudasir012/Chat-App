@@ -35,7 +35,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] relative overflow-x-hidden">
-      {/* Global Background Elements */}
       <div className="grid-bg" />
       <div className="orb w-[500px] h-[500px] bg-[rgba(173,181,189,0.08)] top-[-200px] right-[-100px]" />
       <div className="orb w-[400px] h-[400px] bg-[rgba(108,117,125,0.06)] bottom-0 left-[-100px]" />
