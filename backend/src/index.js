@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
 
-import { connectDB } from "./lib/db.js";
+import { connectDB, ensureDbConnected } from "./lib/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -34,10 +34,10 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/calls", callRoutes);
+app.use("/api/auth", ensureDbConnected, authRoutes);
+app.use("/api/messages", ensureDbConnected, messageRoutes);
+app.use("/api/users", ensureDbConnected, userRoutes);
+app.use("/api/calls", ensureDbConnected, callRoutes);
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
@@ -72,8 +72,7 @@ if (process.env.NODE_ENV !== "production") {
     connectDB();
   });
 } else {
-  // Connect to DB for Vercel serverless functions
-  connectDB();
+  connectDB().catch(() => {});
 }
 
 export default app;
