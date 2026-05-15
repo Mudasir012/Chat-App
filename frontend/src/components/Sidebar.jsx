@@ -41,34 +41,54 @@ const Sidebar = () => {
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [copiedCode, setCopiedCode] = useState(null);
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [isJoiningGroup, setIsJoiningGroup] = useState(false);
+  const [isFetchingGroups, setIsFetchingGroups] = useState(false);
 
   const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/fun-emoji/svg?seed=";
 
   useEffect(() => {
     if (authUser) {
       getUsers();
-      fetchGroups();
+      loadGroups();
     }
   }, [authUser]);
 
+  const loadGroups = async () => {
+    setIsFetchingGroups(true);
+    try {
+      await fetchGroups();
+    } catch (err) {
+      console.error("Failed to fetch groups:", err);
+    } finally {
+      setIsFetchingGroups(false);
+    }
+  };
+
   const handleCreateGroup = async () => {
     if (!newGroupName.trim()) return;
+    setIsCreatingGroup(true);
     try {
-      const result = await createGroup(newGroupName);
+      await createGroup(newGroupName);
       setNewGroupName("");
       setShowCreateGroup(false);
     } catch (err) {
       // Error handled in store
+    } finally {
+      setIsCreatingGroup(false);
     }
   };
 
   const handleJoinByCode = async () => {
     const code = prompt("Enter invite code:");
     if (!code) return;
+    setIsJoiningGroup(true);
     try {
       await joinGroup(code);
     } catch (err) {
       // Error handled in store
+    } finally {
+      setIsJoiningGroup(false);
     }
   };
 
@@ -234,9 +254,14 @@ const Sidebar = () => {
                 </button>
                 <button
                   onClick={handleJoinByCode}
-                  className="flex-1 bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] py-2 rounded-lg text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text)] transition-all flex items-center justify-center gap-1.5"
+                  disabled={isJoiningGroup}
+                  className="flex-1 bg-[var(--bg)] border border-[var(--border)] hover:border-[var(--accent)] py-2 rounded-lg text-xs font-bold text-[var(--text-muted)] hover:text-[var(--text)] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
                 >
-                  <UserPlus className="size-3.5" />
+                  {isJoiningGroup ? (
+                    <span className="size-3.5 border-2 border-[var(--text-muted)] border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <UserPlus className="size-3.5" />
+                  )}
                   Join
                 </button>
               </div>
@@ -312,7 +337,12 @@ const Sidebar = () => {
                 </div>
               ))}
 
-              {groups.length === 0 && (
+              {isFetchingGroups ? (
+                <div className="text-center py-12 px-4">
+                  <span className="size-8 border-2 border-[var(--text-muted)] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                  <p className="text-xs text-[var(--text-muted)]">Loading groups...</p>
+                </div>
+              ) : groups.length === 0 ? (
                 <div className="text-center py-12 px-4">
                   <Users className="size-8 text-[var(--text-muted)] mx-auto mb-2 opacity-50" />
                   <p className="text-xs text-[var(--text-muted)]">No groups yet</p>
@@ -365,10 +395,17 @@ const Sidebar = () => {
                 </button>
                 <button
                   onClick={handleCreateGroup}
-                  disabled={!newGroupName.trim()}
-                  className="flex-1 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--accent-content)] text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
+                  disabled={!newGroupName.trim() || isCreatingGroup}
+                  className="flex-1 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--accent-content)] text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  Create
+                  {isCreatingGroup ? (
+                    <>
+                      <span className="size-4 border-2 border-[var(--accent-content)] border-t-transparent rounded-full animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create"
+                  )}
                 </button>
               </div>
             </motion.div>

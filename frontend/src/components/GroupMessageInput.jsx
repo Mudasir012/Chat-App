@@ -61,7 +61,18 @@ const GroupMessageInput = () => {
       setText("");
       removeImage();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to send message");
+      if (error.response?.status === 401) {
+        toast.error("Session expired. Please login again.");
+        window.location.href = "/auth";
+      } else if (error.response?.status === 403) {
+        toast.error("You are not a member of this group");
+      } else if (error.response?.status === 404) {
+        toast.error("Room not found");
+      } else if (!error.response) {
+        toast.error("Network error. Please check your connection.");
+      } else {
+        toast.error(error.response?.data?.message || "Failed to send message");
+      }
     } finally {
       setIsSending(false);
     }
