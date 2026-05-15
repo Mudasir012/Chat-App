@@ -51,7 +51,7 @@ const Sidebar = () => {
             <span className="font-bold tracking-tight hidden lg:block font-display text-lg">Messages</span>
           </div>
           <span className="text-[10px] font-bold bg-[var(--accent)] text-[var(--accent-content)] px-2.5 py-1 rounded-full hidden lg:block uppercase tracking-wider">
-            {onlineUsers.length - 1} online
+            {Math.max(0, onlineUsers.length - 1)} online · {Math.max(0, users.length - Math.max(0, onlineUsers.length - 1))} offline
           </span>
         </div>
 
