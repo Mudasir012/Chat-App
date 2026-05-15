@@ -9,6 +9,7 @@ import authRoutes from "./routes/auth.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import callRoutes from "./routes/call.routes.js";
+import groupRoutes from "./routes/group.routes.js";
 import { pusher } from "./lib/pusher.js";
 import { protectRoute } from "./middleware/auth.middleware.js";
 
@@ -38,6 +39,7 @@ app.use("/api/auth", ensureDbConnected, authRoutes);
 app.use("/api/messages", ensureDbConnected, messageRoutes);
 app.use("/api/users", ensureDbConnected, userRoutes);
 app.use("/api/calls", ensureDbConnected, callRoutes);
+app.use("/api/groups", ensureDbConnected, groupRoutes);
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });

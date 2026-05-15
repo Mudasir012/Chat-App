@@ -1,11 +1,14 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import Pusher from "pusher-js";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : (import.meta.env.VITE_BACKEND_URL || "");
 
-export const useAuthStore = create((set, get) => ({
+export const useAuthStore = create(
+  persist(
+    (set, get) => ({
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
@@ -234,4 +237,10 @@ export const useAuthStore = create((set, get) => ({
       set({ pusher: null });
     }
   },
-}));
+    }),
+    {
+      name: "plavox-auth-storage",
+      partialize: (state) => ({ authUser: state.authUser }),
+    }
+  )
+);

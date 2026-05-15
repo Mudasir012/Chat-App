@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
 import { useAuthStore } from "./useAuthStore";
@@ -24,7 +25,9 @@ const MOCK_MESSAGES = {
   ],
 };
 
-export const useChatStore = create((set, get) => ({
+export const useChatStore = create(
+  persist(
+    (set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
@@ -205,4 +208,84 @@ export const useChatStore = create((set, get) => ({
   setMessages: (messages) => set({ messages }),
   isTyping: false,
   typingTimeout: null,
-}));
+  selectedGroup: null,
+  selectedRoom: null,
+  groups: [],
+  groupMessages: [],
+  setSelectedGroup: (group) => set({ selectedGroup: group, selectedRoom: null, groupMessages: [] }),
+  setSelectedRoom: (room) => set({ selectedRoom: room }),
+  setGroups: (groups) => set({ groups }),
+  setGroupMessages: (messages) => set({ groupMessages: messages }),
+
+  fetchGroups: async () => {
+    try {
+      const res = await axiosInstance.get("/groups");
+      set({ groups: res.data });
+    } catch (err) {
+      console.error("Failed to fetch groups:", err);
+    }
+  },
+
+  createGroup: async (name, description) => {
+    try {
+      const res = await axiosInstance.post("/groups/create", { name, description });
+      set((state) => ({ groups: [...state.groups, res.data.group] }));
+      toast.success(`Group "${name}" created!`);
+      return res.data;
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to create group");
+      throw err;
+    }
+  },
+
+  joinGroup: async (inviteCode) => {
+    try {
+      const res = await axiosInstance.post("/groups/join", { inviteCode });
+      set((state) => ({ groups: [...state.groups, res.data.group] }));
+      toast.success(`Joined "${res.data.group.name}"!`);
+      return res.data;
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Invalid invite code");
+      throw err;
+    }
+  },
+
+  subscribeToGroupMessages: () => {
+    const { selectedGroup, selectedRoom } = get();
+    if (!selectedGroup || !selectedRoom) return;
+
+    const { authUser, pusher } = useAuthStore.getState();
+    if (!pusher) return;
+
+    const channel = pusher.subscribe(`private-group-${selectedGroup._id}`);
+    channel.bind("room:newMessage", (data) => {
+      if (data.roomId === selectedRoom.name) {
+        set({
+          groupMessages: [...get().groupMessages, data.message],
+        });
+      }
+    });
+  },
+
+  unsubscribeFromGroupMessages: () => {
+    const { selectedGroup } = get();
+    const { pusher } = useAuthStore.getState();
+    if (!pusher || !selectedGroup) return;
+
+    const channel = pusher.subscribe(`private-group-${selectedGroup._id}`);
+    channel.unbind("room:newMessage");
+    pusher.unsubscribe(`private-group-${selectedGroup._id}`);
+  },
+    }),
+    {
+      name: "plavox-chat-storage",
+      partialize: (state) => ({
+        selectedUser: state.selectedUser,
+        users: state.users,
+        selectedGroup: state.selectedGroup,
+        selectedRoom: state.selectedRoom,
+        groups: state.groups,
+      }),
+    }
+  )
+);
