@@ -228,7 +228,7 @@ export const useChatStore = create(
 
   createGroup: async (name, description) => {
     try {
-      const res = await axiosInstance.post("/groups/create", { name, description });
+      const res = await axiosInstance.post("/groups", { name, description });
       set((state) => ({ groups: [...state.groups, res.data.group] }));
       toast.success(`Group "${name}" created!`);
       return res.data;
