@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,8 +11,32 @@ import {
   Loader2,
   ArrowRight,
   Check,
+  MessageCircle,
+  Users,
+  Shield,
 } from "lucide-react";
 import toast from "react-hot-toast";
+
+const AUTH_IMAGES = [
+  {
+    url: "https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=800&q=80",
+    alt: "People chatting on phones",
+    caption: "Connect with anyone, anywhere",
+    icon: <MessageCircle className="size-5" />,
+  },
+  {
+    url: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80",
+    alt: "Team collaboration",
+    caption: "Build communities and groups",
+    icon: <Users className="size-5" />,
+  },
+  {
+    url: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80",
+    alt: "Secure messaging",
+    caption: "Your conversations, encrypted and safe",
+    icon: <Shield className="size-5" />,
+  },
+];
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,9 +47,17 @@ export default function AuthPage() {
     password: "",
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [activeImage, setActiveImage] = useState(0);
 
   const { login, signup, isLoggingIn, isSigningUp } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveImage((prev) => (prev + 1) % AUTH_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,15 +96,60 @@ export default function AuthPage() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-5xl h-[85vh] md:h-[700px] bg-[var(--secondary-bg)] rounded-[2rem] overflow-hidden shadow-2xl border border-[var(--border)] flex flex-col md:flex-row"
       >
-        {/* Left Panel - Branding */}
-        <div className="relative w-full md:w-1/2 bg-gradient-to-br from-[var(--surface)] to-[var(--bg)] p-8 flex flex-col justify-between overflow-hidden">
-          {/* Background decoration */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[var(--accent)]/10 to-transparent" />
+        {/* Left Panel - Branding & Images */}
+        <div className="relative w-full md:w-1/2 bg-gradient-to-br from-[var(--surface)] to-[var(--bg)] overflow-hidden flex flex-col">
+          {/* Image carousel */}
+          <div className="relative flex-1 min-h-[200px] md:min-h-0">
+            <AnimatePresence mode="wait">
+              {AUTH_IMAGES.map((img, index) => (
+                activeImage === index && (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="absolute inset-0"
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alt}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent" />
+                    <div className="absolute bottom-6 left-8 right-8">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1.5 rounded-lg bg-[var(--accent)]/20 text-[var(--accent)]">
+                          {img.icon}
+                        </div>
+                      </div>
+                      <p className="text-sm font-semibold text-[var(--text)]">
+                        {img.caption}
+                      </p>
+                    </div>
+                  </motion.div>
+                )
+              ))}
+            </AnimatePresence>
+
+            {/* Image indicators */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+              {AUTH_IMAGES.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveImage(index)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activeImage === index
+                      ? "w-6 bg-[var(--accent)]"
+                      : "w-1.5 bg-[var(--text-muted)]/40 hover:bg-[var(--text-muted)]/60"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Top bar */}
-          <div className="relative z-10 flex items-center justify-between">
+          <div className="relative z-10 flex items-center justify-between p-6">
             <span className="text-2xl font-bold tracking-tight font-display">
               Plavox
             </span>
@@ -86,31 +163,17 @@ export default function AuthPage() {
           </div>
 
           {/* Bottom content */}
-          <div className="relative z-10 space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+          <div className="relative z-10 px-8 pb-8">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
               {isLogin ? "Welcome back to" : "Start your journey with"}
               <br />
               <span className="text-[var(--accent)]">Plavox</span>
             </h2>
-            <p className="text-[var(--text-muted)] text-sm max-w-xs">
+            <p className="text-[var(--text-muted)] text-sm mt-2 max-w-xs">
               {isLogin
                 ? "Sign in to continue your conversations and stay connected."
                 : "Connect with friends, share moments, and chat in real-time."}
             </p>
-
-            {/* Pagination dots */}
-            <div className="flex gap-2 pt-4">
-              <div
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  isLogin ? "w-8 bg-[var(--accent)]" : "w-3 bg-[var(--surface)]"
-                }`}
-              />
-              <div
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  !isLogin ? "w-8 bg-[var(--accent)]" : "w-3 bg-[var(--surface)]"
-                }`}
-              />
-            </div>
           </div>
         </div>
 
