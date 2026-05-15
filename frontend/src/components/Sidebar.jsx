@@ -353,7 +353,7 @@ const Sidebar = () => {
                     Create your first group
                   </button>
                 </div>
-              )}
+              ) : null}
             </motion.div>
           )}
         </AnimatePresence>
