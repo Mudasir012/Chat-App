@@ -20,12 +20,15 @@ export const useAuthStore = create(
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-
       set({ authUser: res.data });
       get().connectPusher();
     } catch (error) {
       console.log("Error in checkAuth:", error);
-      set({ authUser: null });
+      // Only clear auth if explicitly unauthenticated (401)
+      // Keep persisted state for network errors / cold starts
+      if (error.response?.status === 401) {
+        set({ authUser: null });
+      }
     } finally {
       set({ isCheckingAuth: false });
     }
