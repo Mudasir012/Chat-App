@@ -2,7 +2,15 @@ import axios from "axios";
 
 const getBaseUrl = () => {
   if (import.meta.env.MODE === "development") return "http://localhost:5001/api";
-  return `${import.meta.env.VITE_BACKEND_URL || ""}/api`;
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  if (backendUrl) return `${backendUrl}/api`;
+
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api`;
+  }
+
+  return "/api";
 };
 
 export const axiosInstance = axios.create({

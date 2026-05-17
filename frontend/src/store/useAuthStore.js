@@ -147,15 +147,11 @@ export const useAuthStore = create(
   },
 
   reportUser: async (userId, reason) => {
-    if (userId.startsWith("mock-")) {
-      toast.success("Mock report submitted locally");
-      return;
-    }
     try {
       await axiosInstance.post(`/users/report/${userId}`, { reason });
       toast.success("Report submitted successfully");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Failed to report user");
     }
   },
 

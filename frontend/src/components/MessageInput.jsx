@@ -33,7 +33,7 @@ const MessageInput = () => {
 
   const handleTextChange = (e) => {
     setText(e.target.value);
-    if (selectedUser && !selectedUser.isMock) {
+    if (selectedUser) {
       sendTyping(selectedUser._id);
     }
   };
@@ -41,20 +41,6 @@ const MessageInput = () => {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
-
-    if (selectedUser?.isMock) {
-      const newMessage = {
-        _id: Date.now().toString(),
-        text: text.trim(),
-        image: imagePreview,
-        senderId: authUser._id,
-        createdAt: new Date().toISOString(),
-      };
-      useChatStore.getState().setMessages([...useChatStore.getState().messages, newMessage]);
-      setText("");
-      setImagePreview(null);
-      return;
-    }
 
     try {
       await sendMessage({
