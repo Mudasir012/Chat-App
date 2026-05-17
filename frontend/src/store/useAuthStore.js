@@ -239,12 +239,15 @@ export const useAuthStore = create(
     {
       name: "plavox-auth-storage",
       partialize: (state) => ({ authUser: state.authUser }),
-      onRehydrateStorage: () => (state, error) => {
+      onRehydrateStorage: () => (persistedState, error) => {
         if (error) {
           console.error("Failed to rehydrate auth state:", error);
-          state?.set({ isCheckingAuth: false });
-        } else if (state?.authUser) {
-          state.set({ isCheckingAuth: false });
+          set({ isCheckingAuth: false });
+          return;
+        }
+
+        if (persistedState?.authUser) {
+          set({ isCheckingAuth: false });
         }
       },
     }
