@@ -226,15 +226,6 @@ export const useChatStore = create(
         selectedRoom: state.selectedRoom,
         groups: state.groups,
       }),
-      onRehydrateStorage: () => (persistedState, error) => {
-        if (error) {
-          console.error("Failed to rehydrate chat storage:", error);
-          return;
-        }
-
-        // Clear any stale selected user or user list information from older persisted state.
-        set({ users: [], selectedUser: null });
-      },
     }
   )
 );

@@ -6,14 +6,19 @@ import Pusher from "pusher-js";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : (import.meta.env.VITE_BACKEND_URL || "");
 
+const persistedAuth = typeof window !== "undefined"
+  ? JSON.parse(localStorage.getItem("plavox-auth-storage") || "{}")
+  : {};
+const initialAuthUser = persistedAuth?.state?.authUser || null;
+
 export const useAuthStore = create(
   persist(
     (set, get) => ({
-  authUser: null,
+  authUser: initialAuthUser,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
-  isCheckingAuth: true,
+  isCheckingAuth: !initialAuthUser,
   onlineUsers: [],
   pusher: null,
 
@@ -239,17 +244,6 @@ export const useAuthStore = create(
     {
       name: "plavox-auth-storage",
       partialize: (state) => ({ authUser: state.authUser }),
-      onRehydrateStorage: () => (persistedState, error) => {
-        if (error) {
-          console.error("Failed to rehydrate auth state:", error);
-          set({ isCheckingAuth: false });
-          return;
-        }
-
-        if (persistedState?.authUser) {
-          set({ isCheckingAuth: false });
-        }
-      },
     }
   )
 );
