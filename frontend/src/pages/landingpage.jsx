@@ -6,38 +6,31 @@ import Footer from '../components/Footer'
 import Marquee from '../components/Marquee'
 import { Zap, Rocket, Phone, Video } from 'lucide-react'
 
-const CHAT_SCENARIOS = [
-  {
-    type: "Sarah Miller",
-    messages: [
-      { id: 1, text: "hey!! did you see the redesign? 👀", sender: "friend" },
-      { id: 2, text: "omg yes just now — it looks so clean fr", sender: "me" },
-      { id: 3, text: "the dark mode actually hits different this time 😮💨", sender: "friend" },
-      { id: 4, text: "no cap, finally a chat app with actual taste ✨", sender: "me" }
-    ]
-  }
-]
-
 function ChatDemo() {
-  const [scenarioIndex] = useState(0)
-  const [messages, setMessages] = useState([])
-  const [isTyping, setIsTyping] = useState(false)
-
-  const currentScenario = CHAT_SCENARIOS[scenarioIndex]
-
-  useEffect(() => {
-    let timeout
-    const addMessage = (index) => {
-      if (index >= currentScenario.messages.length) {
-        timeout = setTimeout(() => {
-          setMessages([])
-          addMessage(0)
-        }, 4000)
-        return
-      }
-
-      const msg = currentScenario.messages[index]
-      if (msg.sender === 'friend') {
+  return (
+    <div className="h-full w-full bg-[var(--secondary-bg)] rounded-[1.8rem] p-6 flex flex-col justify-between">
+      <div className="space-y-6">
+        <div className="rounded-[1.5rem] bg-[var(--bg)]/80 p-6 text-center text-sm text-[var(--text-muted)] font-semibold">
+          Live chat preview
+        </div>
+        <div className="space-y-3">
+          <div className="rounded-[1.5rem] bg-[var(--bg)]/60 p-4">
+            <p className="text-sm font-semibold text-[var(--text)]">No dummy chats here — only real conversations appear in the app.</p>
+          </div>
+          <div className="rounded-[1.5rem] bg-[var(--bg)]/60 p-4">
+            <p className="text-sm font-semibold text-[var(--text)]">Invite your peers with group invite codes and talk in real time.</p>
+          </div>
+          <div className="rounded-[1.5rem] bg-[var(--bg)]/60 p-4">
+            <p className="text-sm font-semibold text-[var(--text)]">All user lists are fetched live from the backend.</p>
+          </div>
+        </div>
+      </div>
+      <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em]">
+        Real chat users only, no placeholder names.
+      </div>
+    </div>
+  )
+}
         setIsTyping(true)
         timeout = setTimeout(() => {
           setIsTyping(false)

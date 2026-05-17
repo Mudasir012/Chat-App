@@ -222,12 +222,20 @@ export const useChatStore = create(
     {
       name: "plavox-chat-storage",
       partialize: (state) => ({
-        selectedUser: state.selectedUser,
-        users: state.users,
         selectedGroup: state.selectedGroup,
         selectedRoom: state.selectedRoom,
         groups: state.groups,
       }),
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error("Failed to rehydrate chat storage:", error);
+          return;
+        }
+
+        if (state?.set) {
+          state.set({ users: [], selectedUser: null });
+        }
+      },
     }
   )
 );
