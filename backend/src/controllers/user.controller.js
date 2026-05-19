@@ -7,14 +7,28 @@ export const reportUser = async (req, res) => {
     const { reason } = req.body;
     const reporterId = req.user._id;
 
-    if (!reason) {
+    if (!reportedUserId) {
+      return res.status(400).json({ message: "Reported user ID is required" });
+    }
+
+    if (!reason || !reason.trim()) {
       return res.status(400).json({ message: "Reason is required" });
+    }
+
+    if (reportedUserId === reporterId.toString()) {
+      return res.status(400).json({ message: "You cannot report yourself" });
+    }
+
+    // Make sure the reported user actually exists
+    const reportedUser = await User.findById(reportedUserId);
+    if (!reportedUser) {
+      return res.status(404).json({ message: "Reported user not found" });
     }
 
     const report = new Report({
       reporterId,
       reportedUserId,
-      reason,
+      reason: reason.trim(),
     });
 
     await report.save();
@@ -31,7 +45,7 @@ export const searchUsers = async (req, res) => {
     const { query } = req.query;
     const loggedInUserId = req.user._id;
 
-    if (!query) {
+    if (!query || !query.trim()) {
       return res.status(400).json({ message: "Search query is required" });
     }
 
@@ -40,13 +54,15 @@ export const searchUsers = async (req, res) => {
         { _id: { $ne: loggedInUserId } },
         {
           $or: [
-            { fullName: { $regex: query, $options: "i" } },
-            { username: { $regex: query, $options: "i" } },
-            { email: { $regex: query, $options: "i" } },
+            { fullName: { $regex: query.trim(), $options: "i" } },
+            { username: { $regex: query.trim(), $options: "i" } },
+            { email: { $regex: query.trim(), $options: "i" } },
           ],
         },
       ],
-    }).select("-password").limit(10);
+    })
+      .select("-password")
+      .limit(10);
 
     res.status(200).json(users);
   } catch (error) {
@@ -60,12 +76,30 @@ export const blockUser = async (req, res) => {
     const { id: userIdToBlock } = req.params;
     const loggedInUserId = req.user._id;
 
+    if (!userIdToBlock) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
     if (userIdToBlock === loggedInUserId.toString()) {
       return res.status(400).json({ message: "You cannot block yourself" });
     }
 
+    // Ensure the target user exists
+    const targetUser = await User.findById(userIdToBlock);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const user = await User.findById(loggedInUserId);
-    if (!user.blockedUsers.includes(userIdToBlock)) {
+    if (!user) {
+      return res.status(404).json({ message: "Logged-in user not found" });
+    }
+
+    const alreadyBlocked = user.blockedUsers.some(
+      (id) => id.toString() === userIdToBlock
+    );
+
+    if (!alreadyBlocked) {
       user.blockedUsers.push(userIdToBlock);
       await user.save();
     }
@@ -82,8 +116,22 @@ export const unblockUser = async (req, res) => {
     const { id: userIdToUnblock } = req.params;
     const loggedInUserId = req.user._id;
 
+    if (!userIdToUnblock) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    if (userIdToUnblock === loggedInUserId.toString()) {
+      return res.status(400).json({ message: "You cannot unblock yourself" });
+    }
+
     const user = await User.findById(loggedInUserId);
-    user.blockedUsers = user.blockedUsers.filter((id) => id.toString() !== userIdToUnblock);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.blockedUsers = user.blockedUsers.filter(
+      (id) => id.toString() !== userIdToUnblock
+    );
     await user.save();
 
     res.status(200).json({ message: "User unblocked successfully" });
@@ -95,7 +143,15 @@ export const unblockUser = async (req, res) => {
 
 export const getBlockedUsers = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).populate("blockedUsers", "-password");
+    const user = await User.findById(req.user._id).populate(
+      "blockedUsers",
+      "-password"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.status(200).json(user.blockedUsers);
   } catch (error) {
     console.error("Error in getBlockedUsers: ", error.message);
