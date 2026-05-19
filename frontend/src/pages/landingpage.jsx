@@ -43,11 +43,7 @@ export default function LandingPage() {
       
       <Navbar />
       
-      <div className="mt-20">
-         <Marquee text="End-to-End Encrypted • Lightning Fast • No Tracking Ever • Global Community • Beautiful Design • Free Forever" />
-      </div>
-
-      <main className='w-full flex flex-col items-center py-20 px-4 relative z-10'>
+      <main className='w-full flex flex-col items-center py-10 px-4 relative z-10 flex-grow justify-center'>
         <div className='container max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'>
           <div className='space-y-8 text-center lg:text-left'>
             <motion.div 
@@ -59,12 +55,12 @@ export default function LandingPage() {
               <span>Now in open beta</span>
             </motion.div>
             
-            <h1 className='text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.95]'>
+            <h1 className='text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.95]'>
               Chat that hits<br />
               <span className="text-[var(--accent)]">different.</span>
             </h1>
             
-            <p className="text-xl text-[var(--text-muted)] max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
+            <p className="text-lg text-[var(--text-muted)] max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
               Secure, fast, and actually good-looking. No cringe UI, no ads, no data selling. Just pure connection.
             </p>
             
@@ -130,8 +126,8 @@ export default function LandingPage() {
                </div>
              </motion.div>
 
-             <div className="max-w-[360px] mx-auto p-1 bg-[var(--secondary-bg)]/50 backdrop-blur-2xl rounded-[2rem] border border-[var(--border)] shadow-2xl shadow-black/50">
-                <div className="h-[520px] w-full rounded-[1.8rem] overflow-hidden">
+             <div className="max-w-[320px] mx-auto p-1 bg-[var(--secondary-bg)]/50 backdrop-blur-2xl rounded-[2rem] border border-[var(--border)] shadow-2xl shadow-black/50">
+                <div className="h-[460px] w-full rounded-[1.8rem] overflow-hidden">
                   <ChatDemo />
                 </div>
              </div>
