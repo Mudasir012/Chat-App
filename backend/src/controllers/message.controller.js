@@ -8,13 +8,18 @@ export const getUsersForSidebar = async (req, res) => {
   try {
     const loggedInUserId = req.user._id;
     const user = await User.findById(loggedInUserId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
     const blockedUsers = user.blockedUsers || [];
 
     const filteredUsers = await User.find({
       $and: [
         { _id: { $ne: loggedInUserId } },
         { _id: { $nin: blockedUsers } },
-        { blockedUsers: { $ne: loggedInUserId } },
+        { blockedUsers: { $nin: [loggedInUserId] } },
       ],
     }).select("-password");
 
