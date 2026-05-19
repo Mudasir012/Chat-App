@@ -8,7 +8,7 @@ export default function Navbar({ isCompact }) {
   return (
     <div className={`navbar w-full flex justify-between items-center glass sticky top-0 z-50 transition-all duration-500 ${isCompact
         ? "p-1.5 px-6 rounded-none max-w-none mt-0 border-x-0 border-t-0 shadow-sm"
-        : "p-2.5 px-8 rounded-full max-w-5xl mx-auto mt-4 top-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-white/5"
+        : "p-2.5 px-6 rounded-full max-w-5xl mx-auto mt-4 top-4 shadow-[0_8px_30px_rgba(0,0,0,0.3)] border border-white/5"
       }`}>
       <nav className='flex items-center gap-3'>
         <div className={`bg-[var(--accent)] rounded-[1rem] transition-all ${isCompact ? "p-1.5" : "p-2.5"} shadow-lg shadow-black/10`}>

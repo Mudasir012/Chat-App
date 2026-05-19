@@ -49,7 +49,7 @@ export default function LandingPage() {
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(173,181,189,0.07)] border border-[rgba(173,181,189,0.3)] text-xs font-semibold text-[var(--accent)]"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[rgba(173,181,189,0.07)] border border-[rgba(173,181,189,0.3)] text-[11px] font-semibold text-[var(--accent)] uppercase tracking-wider"
             >
               <div className="size-1.5 rounded-full bg-[var(--accent-green)] animate-pulse" />
               <span>Now in open beta</span>
@@ -82,7 +82,7 @@ export default function LandingPage() {
                   </div>
                 ))}
               </div>
-              <p className="text-sm font-light text-[var(--text-muted)]">
+              <p className="text-xs font-light text-[var(--text-muted)]">
                 Joined by <span className="text-[var(--text)] font-semibold">10,000+</span> people worldwide
               </p>
             </div>
@@ -136,12 +136,12 @@ export default function LandingPage() {
       </main>
 
       {/* Features Section */}
-      <section className="w-full flex justify-center py-32 px-4 relative z-10 border-t border-[var(--border)]">
+      <section className="w-full flex justify-center py-24 px-4 relative z-10 border-t border-[var(--border)]">
         <div className="container max-w-6xl">
-          <div className="text-left mb-20 max-w-2xl">
-            <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Why Plavox?</p>
-            <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 leading-none">Built different,<br />for real.</h2>
-            <p className="text-xl text-[var(--text-muted)] font-light leading-relaxed">Everything you'd want in a messaging app, nothing you wouldn't.</p>
+          <div className="text-left mb-16 max-w-2xl">
+            <p className="text-[10px] font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Why Plavox?</p>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 leading-none">Built different,<br />for real.</h2>
+            <p className="text-lg text-[var(--text-muted)] font-light leading-relaxed">Everything you'd want in a messaging app, nothing you wouldn't.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -170,12 +170,12 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="w-full flex justify-center py-32 px-4 relative z-10 border-t border-[var(--border)]">
+      <section className="w-full flex justify-center py-24 px-4 relative z-10 border-t border-[var(--border)]">
         <div className="container max-w-6xl">
-          <div className="text-center mb-20">
-            <p className="text-xs font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Pricing</p>
-            <h2 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6">Simple pricing,<br />no cap.</h2>
-            <p className="text-xl text-[var(--text-muted)] font-light">Pick what works for you. Upgrade anytime, no questions asked.</p>
+          <div className="text-center mb-16">
+            <p className="text-[10px] font-bold text-[var(--accent)] uppercase tracking-[0.2em] mb-4">Pricing</p>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">Simple pricing,<br />no cap.</h2>
+            <p className="text-lg text-[var(--text-muted)] font-light">Pick what works for you. Upgrade anytime, no questions asked.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
