@@ -1,25 +1,26 @@
 import mongoose from "mongoose";
 
-let cachedDb = null;
-
 export const connectDB = async () => {
-  if (cachedDb) return cachedDb;
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);
     console.log(`MongoDB connected: ${conn.connection.host}`);
-    cachedDb = conn;
-    return conn;
   } catch (error) {
-    console.log("MongoDB connection error:", error);
-    throw error;
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1); // don't silently continue
   }
 };
 
 export const ensureDbConnected = async (req, res, next) => {
+  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+  if (mongoose.connection.readyState === 1) {
+    return next();
+  }
+
   try {
-    await connectDB();
+    await mongoose.connect(process.env.MONGODB_URI);
     next();
   } catch (error) {
-    res.status(500).json({ message: "Database connection failed" });
+    console.error("DB connection failed in middleware:", error.message);
+    res.status(503).json({ message: "Database unavailable, try again later" });
   }
 };
