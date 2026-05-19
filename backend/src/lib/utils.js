@@ -5,7 +5,7 @@ export const generateToken = (userId, res) => {
     expiresIn: "7d",
   });
 
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL === "1";
 
   res.cookie("jwt", token, {
     maxAge: 7 * 24 * 60 * 60 * 1000, // MS
