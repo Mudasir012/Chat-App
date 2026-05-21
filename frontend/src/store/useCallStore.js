@@ -45,6 +45,7 @@ export const useCallStore = create((set, get) => ({
   },
 
   declineCall: () => {
+    const { call } = get();
     if (call) {
       axiosInstance.post("/calls/decline", { to: call.from._id });
     }

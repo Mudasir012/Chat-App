@@ -12,6 +12,10 @@ import {
   getGroupMessages,
   sendGroupMessage,
   getGroupInvites,
+  getGroupTasks,
+  createGroupTask,
+  updateGroupTask,
+  deleteGroupTask,
 } from "../controllers/group.controller.js";
 
 const router = express.Router();
@@ -29,5 +33,11 @@ router.post("/:groupId/rooms", createRoom);
 router.delete("/:groupId/rooms/:roomName", deleteRoom);
 router.get("/:groupId/rooms/:roomName/messages", getGroupMessages);
 router.post("/:groupId/rooms/:roomName/messages", sendGroupMessage);
+
+// Task Board Routes
+router.get("/:groupId/rooms/:roomName/tasks", getGroupTasks);
+router.post("/:groupId/rooms/:roomName/tasks", createGroupTask);
+router.put("/:groupId/tasks/:taskId", updateGroupTask);
+router.delete("/:groupId/tasks/:taskId", deleteGroupTask);
 
 export default router;

@@ -45,7 +45,7 @@ export const useAuthStore = create(
       toast.success(res.data.message);
       return { success: true, email: data.email };
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
       return { success: false };
     } finally {
       set({ isSigningUp: false });
@@ -60,7 +60,7 @@ export const useAuthStore = create(
       get().connectPusher();
       return true;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
       return false;
     }
   },
@@ -114,7 +114,7 @@ export const useAuthStore = create(
       await axiosInstance.post("/auth/forgot-password", { email });
       toast.success("Password reset link sent to your email");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   },
 
@@ -124,7 +124,7 @@ export const useAuthStore = create(
       toast.success("Password reset successfully");
       return true;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
       return false;
     }
   },
@@ -134,7 +134,7 @@ export const useAuthStore = create(
       const res = await axiosInstance.get(`/users/search?query=${query}`);
       return res.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
       return [];
     }
   },
@@ -147,7 +147,7 @@ export const useAuthStore = create(
       const authRes = await axiosInstance.get("/auth/check");
       set({ authUser: authRes.data });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   },
 
@@ -168,7 +168,7 @@ export const useAuthStore = create(
       const authRes = await axiosInstance.get("/auth/check");
       set({ authUser: authRes.data });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   },
 
@@ -177,7 +177,7 @@ export const useAuthStore = create(
       const res = await axiosInstance.get("/users/blocked");
       return res.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
       return [];
     }
   },
@@ -220,8 +220,8 @@ export const useAuthStore = create(
       import("./useCallStore").then((mod) => mod.useCallStore.getState().receiveCall(data));
     });
 
-    userChannel.bind("call:accepted", (data) => {
-      import("./useCallStore").then((mod) => mod.useCallStore.getState().set({ status: "connected" }));
+    userChannel.bind("call:accepted", () => {
+      import("./useCallStore").then((mod) => mod.useCallStore.getState().acceptCall());
     });
 
     userChannel.bind("call:declined", () => {

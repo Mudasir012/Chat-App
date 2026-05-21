@@ -4,6 +4,7 @@ import { Check, CheckCheck } from "lucide-react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import GroupMessageInput from "./GroupMessageInput";
+import BoardContainer from "./BoardContainer";
 import { useAuthStore } from "../store/useAuthStore";
 import { format } from "date-fns";
 import { axiosInstance } from "../lib/axios";
@@ -30,6 +31,7 @@ const ChatContainer = () => {
   const [isGroupLoading, setIsGroupLoading] = useState(false);
 
   const isGroupChat = !!selectedGroup && !!selectedRoom;
+  const isBoardRoom = isGroupChat && selectedRoom.type === "board";
 
   useEffect(() => {
     if (!isGroupChat && selectedUser?._id) {
@@ -97,6 +99,15 @@ const ChatContainer = () => {
           <h3 className="text-xl font-bold mb-2">Welcome to Plavox</h3>
           <p className="text-sm text-[var(--text-muted)]">Select a conversation to start chatting</p>
         </div>
+      </div>
+    );
+  }
+
+  if (isBoardRoom) {
+    return (
+      <div className="flex-1 flex flex-col bg-transparent">
+        <ChatHeader />
+        <BoardContainer />
       </div>
     );
   }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { Mail, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
@@ -13,43 +13,58 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-base-200">
-      <div className="max-w-md w-full bg-base-100 p-8 border-4 border-primary shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-        <div className="mb-4">
-          <Link to="/signin" className="flex items-center gap-2 text-primary font-bold hover:underline">
-            <ArrowLeft className="size-4" /> Back to Sign In
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--text)] p-4 relative overflow-hidden">
+      {/* Dynamic Background */}
+      <div className="grid-bg" />
+      <div className="orb w-[400px] h-[400px] bg-[var(--orb-1)] top-[-100px] right-[-100px]" />
+      <div className="orb w-[300px] h-[300px] bg-[var(--orb-2)] bottom-[-100px] left-[-100px]" />
+
+      <div className="max-w-md w-full bg-[var(--secondary-bg)] p-8 md:p-10 rounded-[2.5rem] border border-[var(--border)] shadow-2xl relative z-10 space-y-6">
+        <div className="mb-2">
+          <Link to="/signin" className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors px-3 py-1.5 rounded-full bg-[var(--bg)]/50 border border-[var(--border)]">
+            <ArrowLeft className="size-3.5" /> Back to Sign In
           </Link>
         </div>
-        <div className="text-center mb-8">
-          <div className="flex flex-col items-center gap-2 group">
-            <div
-              className="size-12 rounded-xl bg-primary/10 flex items-center justify-center 
-            group-hover:bg-primary/20 transition-colors"
-            >
-              <Mail className="size-6 text-primary" />
+        
+        <div className="text-center space-y-3">
+          <div className="flex flex-col items-center gap-3">
+            <div className="size-12 rounded-2xl bg-[var(--accent)]/10 flex items-center justify-center text-[var(--accent)] border border-[var(--accent)]/20 shadow-sm">
+              <Mail className="size-5" />
             </div>
-            <h1 className="text-2xl font-black uppercase italic">Forgot Password</h1>
-            <p className="text-base-content/60 font-bold">Enter your email to receive a reset link</p>
+            <h1 className="text-3xl font-bold tracking-tight font-display">Forgot Password</h1>
+            <p className="text-sm text-[var(--text-muted)] leading-relaxed">Enter your email to receive a secure reset link</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text font-black uppercase">Email Address</span>
-            </label>
-            <input
-              type="email"
-              className="input input-bordered w-full font-bold"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Email Address</label>
+            <div className="relative">
+              <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-[var(--text-muted)]" />
+              <input
+                type="email"
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all font-semibold"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
           </div>
 
-          <button type="submit" className="btn btn-primary w-full font-black uppercase italic" disabled={isCheckingAuth}>
-            {isCheckingAuth ? "Sending..." : "Send Reset Link"}
+          <button 
+            type="submit" 
+            className="btn-primary w-full py-3.5 flex items-center justify-center gap-2 text-sm" 
+            disabled={isCheckingAuth}
+          >
+            {isCheckingAuth ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              "Send Reset Link"
+            )}
           </button>
         </form>
       </div>

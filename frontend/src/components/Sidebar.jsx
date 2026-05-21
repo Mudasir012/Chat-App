@@ -8,11 +8,13 @@ import {
   UserPlus,
   Hash,
   Inbox,
+  LayoutGrid,
   MessageSquare,
   Settings,
   Copy,
   Check,
   LogOut,
+  FolderPlus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
@@ -44,6 +46,10 @@ const Sidebar = () => {
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const [isJoiningGroup, setIsJoiningGroup] = useState(false);
   const [isFetchingGroups, setIsFetchingGroups] = useState(false);
+  const [showCreateRoom, setShowCreateRoom] = useState(false);
+  const [newRoomName, setNewRoomName] = useState("");
+  const [newRoomType, setNewRoomType] = useState("text");
+  const [isCreatingRoom, setIsCreatingRoom] = useState(false);
 
   const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/fun-emoji/svg?seed=";
 
@@ -92,6 +98,26 @@ const Sidebar = () => {
     }
   };
 
+  const handleCreateRoom = async () => {
+    if (!newRoomName.trim() || !selectedGroup) return;
+    setIsCreatingRoom(true);
+    try {
+      const res = await axiosInstance.post(`/groups/${selectedGroup._id}/rooms`, {
+        name: newRoomName.trim(),
+        type: newRoomType,
+      });
+      setGroups(res.data);
+      setNewRoomName("");
+      setNewRoomType("text");
+      setShowCreateRoom(false);
+      toast.success(`Room "${newRoomName}" created!`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to create room");
+    } finally {
+      setIsCreatingRoom(false);
+    }
+  };
+
   const copyInviteCode = async (group) => {
     try {
       await navigator.clipboard.writeText(group.inviteCode);
@@ -109,6 +135,7 @@ const Sidebar = () => {
 
   const getRoomIcon = (room) => {
     if (room.name.toLowerCase() === "general") return <MessageSquare className="size-4" />;
+    if (room.type === "board") return <LayoutGrid className="size-4" />;
     return <Hash className="size-4" />;
   };
 
@@ -119,7 +146,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="h-full w-20 lg:w-72 bg-[var(--secondary-bg)] border-r border-[var(--border)] flex flex-col">
+    <aside className="h-full w-full md:w-20 lg:w-72 bg-[var(--secondary-bg)] border-r border-[var(--border)] flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between mb-4">
@@ -316,6 +343,17 @@ const Sidebar = () => {
                             </button>
                           ))}
 
+                          {/* Create Room button for admins */}
+                          {group.createdBy === authUser._id && (
+                            <button
+                              onClick={() => setShowCreateRoom(true)}
+                              className="w-full px-3 py-1.5 flex items-center gap-2 text-xs text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all rounded mt-1"
+                            >
+                              <FolderPlus className="size-3.5" />
+                              <span>Create Room</span>
+                            </button>
+                          )}
+
                           {/* Invite code */}
                           <div className="px-3 py-2 mt-1">
                             <button
@@ -399,6 +437,95 @@ const Sidebar = () => {
                   className="flex-1 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--accent-content)] text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isCreatingGroup ? (
+                    <>
+                      <span className="size-4 border-2 border-[var(--accent-content)] border-t-transparent rounded-full animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Create Room Modal */}
+      <AnimatePresence>
+        {showCreateRoom && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowCreateRoom(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-[var(--secondary-bg)] rounded-2xl p-6 w-full max-w-sm border border-[var(--border)]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-bold mb-4">Create Room</h3>
+              <input
+                type="text"
+                placeholder="Room name"
+                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] mb-4"
+                value={newRoomName}
+                onChange={(e) => setNewRoomName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleCreateRoom()}
+                autoFocus
+              />
+              <div className="mb-4">
+                <label className="block text-xs font-bold text-[var(--text-muted)] mb-2 uppercase tracking-wider">Room Type</label>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setNewRoomType("text")}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                      newRoomType === "text"
+                        ? "bg-[var(--accent)] text-[var(--accent-content)]"
+                        : "bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)]"
+                    }`}
+                  >
+                    Text
+                  </button>
+                  <button
+                    onClick={() => setNewRoomType("board")}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                      newRoomType === "board"
+                        ? "bg-[var(--accent)] text-[var(--accent-content)]"
+                        : "bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)]"
+                    }`}
+                  >
+                    Board
+                  </button>
+                  <button
+                    onClick={() => setNewRoomType("voice")}
+                    className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                      newRoomType === "voice"
+                        ? "bg-[var(--accent)] text-[var(--accent-content)]"
+                        : "bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)]"
+                    }`}
+                  >
+                    Voice
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowCreateRoom(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-[var(--border)] text-sm font-semibold hover:bg-[var(--bg)] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateRoom}
+                  disabled={!newRoomName.trim() || isCreatingRoom}
+                  className="flex-1 py-2.5 rounded-xl bg-[var(--accent)] text-[var(--accent-content)] text-sm font-semibold hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isCreatingRoom ? (
                     <>
                       <span className="size-4 border-2 border-[var(--accent-content)] border-t-transparent rounded-full animate-spin" />
                       Creating...

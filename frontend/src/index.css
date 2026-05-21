@@ -3,12 +3,13 @@
 
 @layer base {
   :root {
-    --bg: #212529;
-    --secondary-bg: #343A40;
-    --surface: #495057;
+    /* Premium space dark theme variables */
+    --bg: #0A0D14;
+    --secondary-bg: #121824;
+    --surface: #1E293B;
     --text: #F8F9FA;
-    --text-muted: #ADB5BD;
-    --border: rgba(248, 249, 250, 0.08);
+    --text-muted: #94A3B8;
+    --border: rgba(248, 249, 250, 0.06);
     --accent: #3B82F6;
     --accent-hover: #60A5FA;
     --accent-content: #FFFFFF;
@@ -16,6 +17,30 @@
     --radius: 1.75rem;
     --font-display: 'Bricolage Grotesque', sans-serif;
     --font-body: 'DM Sans', sans-serif;
+    
+    --grid-color: rgba(248, 249, 250, 0.02);
+    --orb-1: rgba(59, 130, 246, 0.08);
+    --orb-2: rgba(99, 102, 241, 0.06);
+    --orb-3: rgba(168, 85, 247, 0.05);
+  }
+
+  [data-theme="light"] {
+    /* Premium bright theme variables */
+    --bg: #F8FAFC;
+    --secondary-bg: #FFFFFF;
+    --surface: #F1F5F9;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --border: rgba(15, 23, 42, 0.06);
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
+    --accent-content: #FFFFFF;
+    --secondary-accent: #0EA5E9;
+    
+    --grid-color: rgba(15, 23, 42, 0.02);
+    --orb-1: rgba(59, 130, 246, 0.04);
+    --orb-2: rgba(99, 102, 241, 0.03);
+    --orb-3: rgba(168, 85, 247, 0.02);
   }
 
   html, body {
@@ -48,7 +73,7 @@
 
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -83,15 +108,15 @@
 
 @layer components {
   .btn-primary {
-    @apply px-8 py-3.5 bg-[var(--accent)] text-[var(--accent-content)] rounded-full font-bold hover:translate-y-[-2px] active:scale-95 transition-all shadow-[0_0_20px_rgba(206,212,218,0.2)] hover:bg-[var(--accent-hover)] hover:shadow-[0_0_35px_rgba(206,212,218,0.4)];
+    @apply px-8 py-3.5 bg-[var(--accent)] text-[var(--accent-content)] rounded-full font-bold hover:translate-y-[-2px] active:scale-95 transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:bg-[var(--accent-hover)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] cursor-pointer;
   }
 
   .btn-ghost {
-    @apply px-8 py-3.5 bg-transparent text-[var(--text)] border border-[var(--border)] rounded-full font-medium hover:bg-white/5 active:scale-95 transition-all;
+    @apply px-8 py-3.5 bg-transparent text-[var(--text)] border border-[var(--border)] rounded-full font-medium hover:bg-white/5 active:scale-95 transition-all cursor-pointer;
   }
   
   .glass {
-    @apply backdrop-blur-xl bg-[rgba(33,37,41,0.7)] border border-[var(--border)];
+    @apply backdrop-blur-xl bg-[var(--secondary-bg)]/75 border border-[var(--border)];
   }
 
   .card-curvy {
@@ -100,8 +125,8 @@
 
   .grid-bg {
     @apply fixed inset-0 pointer-events-none z-0;
-    background-image: linear-gradient(rgba(248,249,250,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(248,249,250,0.03) 1px, transparent 1px);
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
     background-size: 60px 60px;
   }
 

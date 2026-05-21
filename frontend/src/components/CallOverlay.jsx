@@ -35,9 +35,7 @@ const CallOverlay = () => {
         zp.joinRoom({
           container: containerRef.current,
           scenario: {
-            mode: call.type === "video" 
-              ? ZegoUIKitPrebuilt.OneONoneCall 
-              : ZegoUIKitPrebuilt.GroupCall, // Zego uses GroupCall for voice sometimes, but OneONoneCall is fine
+            mode: ZegoUIKitPrebuilt.OneONoneCall,
           },
           turnOnMicrophoneWhenJoining: true,
           turnOnCameraWhenJoining: call.type === "video",

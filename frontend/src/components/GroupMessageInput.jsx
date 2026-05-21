@@ -41,12 +41,12 @@ const GroupMessageInput = () => {
       let imageUrl = null;
 
       if (image) {
-        const formData = new FormData();
-        formData.append("image", image);
-        const uploadRes = await axiosInstance.post("/messages/upload", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        const reader = new FileReader();
+        imageUrl = await new Promise((resolve, reject) => {
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(image);
         });
-        imageUrl = uploadRes.data.url;
       }
 
       const res = await axiosInstance.post(

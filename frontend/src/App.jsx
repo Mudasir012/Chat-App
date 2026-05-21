@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useAuthStore } from './store/useAuthStore'
+import { useThemeStore } from './store/useThemeStore'
 import { Loader } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
 import LandingPage from './pages/landingpage.jsx'
@@ -20,10 +21,15 @@ import './App.css'
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
+  const { theme } = useThemeStore()
 
   useEffect(() => {
     checkAuth()
   }, [checkAuth])
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
   if (isCheckingAuth && !authUser) {
     return (
@@ -36,8 +42,8 @@ function App() {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] relative overflow-x-hidden">
       <div className="grid-bg" />
-      <div className="orb w-[500px] h-[500px] bg-[rgba(173,181,189,0.08)] top-[-200px] right-[-100px]" />
-      <div className="orb w-[400px] h-[400px] bg-[rgba(108,117,125,0.06)] bottom-0 left-[-100px]" />
+      <div className="orb w-[500px] h-[500px] bg-[var(--orb-1)] top-[-200px] right-[-100px]" />
+      <div className="orb w-[400px] h-[400px] bg-[var(--orb-2)] bottom-0 left-[-100px]" />
       
       <div className="relative z-10 flex flex-col min-h-screen">
         <Router>

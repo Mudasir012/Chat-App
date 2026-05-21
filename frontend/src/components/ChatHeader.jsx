@@ -107,7 +107,22 @@ const ChatHeader = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => initCall(selectedUser, "voice")}
+            className="p-2 text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 rounded-xl transition-all"
+            title="Voice Call"
+          >
+            <Phone className="size-4" />
+          </button>
+          <button
+            onClick={() => initCall(selectedUser, "video")}
+            className="p-2 text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/10 rounded-xl transition-all"
+            title="Video Call"
+          >
+            <Video className="size-4" />
+          </button>
+
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -120,27 +135,8 @@ const ChatHeader = () => {
               <ul className="absolute right-0 top-full z-[50] menu p-1.5 shadow-2xl bg-[var(--surface)] border border-[var(--border)] rounded-xl w-44 mt-2 font-bold uppercase text-[10px] tracking-widest animate-in fade-in zoom-in duration-200">
                 <li>
                   <button
-                    onClick={() => { initCall(selectedUser, "voice"); setIsMenuOpen(false); }}
-                    className="hover:bg-[var(--secondary-bg)] py-2 flex items-center gap-2"
-                  >
-                    <Phone className="size-3.5" />
-                    Voice Call
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => { initCall(selectedUser, "video"); setIsMenuOpen(false); }}
-                    className="hover:bg-[var(--secondary-bg)] py-2 flex items-center gap-2"
-                  >
-                    <Video className="size-3.5" />
-                    Video Call
-                  </button>
-                </li>
-                <div className="h-px bg-[var(--border)] my-1 mx-2" />
-                <li>
-                  <button
                     onClick={() => { handleReportUser(); setIsMenuOpen(false); }}
-                    className="hover:bg-[var(--secondary-bg)] py-2"
+                    className="hover:bg-[var(--secondary-bg)] py-2 flex items-center gap-2"
                   >
                     Report User
                   </button>
@@ -148,7 +144,7 @@ const ChatHeader = () => {
                 <li>
                   <button
                     onClick={() => { handleClearChat(); setIsMenuOpen(false); }}
-                    className="hover:bg-[var(--secondary-bg)] py-2"
+                    className="hover:bg-[var(--secondary-bg)] py-2 flex items-center gap-2"
                   >
                     Clear Chat
                   </button>

@@ -45,7 +45,7 @@ export const useChatStore = create(
       const res = await axiosInstance.post(`/messages/send/${selectedUser._id}`, messageData);
       set({ messages: [...messages, res.data] });
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Failed to send message");
     }
   },
 
@@ -130,7 +130,8 @@ export const useChatStore = create(
   unsubscribeFromMessages: () => {
     const { authUser, pusher } = useAuthStore.getState();
     if (!pusher) return;
-    const userChannel = pusher.subscribe(`private-user-${authUser._id}`);
+    const userChannel = pusher.channel(`private-user-${authUser._id}`);
+    if (!userChannel) return;
     userChannel.unbind("newMessage");
     userChannel.unbind("messageReaction");
     userChannel.unbind("userTyping");
@@ -192,11 +193,70 @@ export const useChatStore = create(
     }
   },
 
+  boardTasks: [],
+  setBoardTasks: (tasks) => set({ boardTasks: tasks }),
+
+  fetchBoardTasks: async () => {
+    const { selectedGroup, selectedRoom } = get();
+    if (!selectedGroup || !selectedRoom) return;
+    try {
+      const res = await axiosInstance.get(
+        `/groups/${selectedGroup._id}/rooms/${selectedRoom.name}/tasks`
+      );
+      set({ boardTasks: res.data });
+    } catch (err) {
+      console.error("Failed to fetch board tasks:", err);
+    }
+  },
+
+  createTask: async (taskData) => {
+    const { selectedGroup, selectedRoom } = get();
+    if (!selectedGroup || !selectedRoom) return;
+    try {
+      const res = await axiosInstance.post(
+        `/groups/${selectedGroup._id}/rooms/${selectedRoom.name}/tasks`,
+        taskData
+      );
+      set({ boardTasks: [...get().boardTasks, res.data] });
+      toast.success("Task created");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to create task");
+    }
+  },
+
+  updateTask: async (taskId, taskData) => {
+    const { selectedGroup } = get();
+    if (!selectedGroup) return;
+    try {
+      const res = await axiosInstance.put(
+        `/groups/${selectedGroup._id}/tasks/${taskId}`,
+        taskData
+      );
+      set({
+        boardTasks: get().boardTasks.map((t) => (t._id === taskId ? res.data : t)),
+      });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update task");
+    }
+  },
+
+  deleteTask: async (taskId) => {
+    const { selectedGroup } = get();
+    if (!selectedGroup) return;
+    try {
+      await axiosInstance.delete(`/groups/${selectedGroup._id}/tasks/${taskId}`);
+      set({ boardTasks: get().boardTasks.filter((t) => t._id !== taskId) });
+      toast.success("Task deleted");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete task");
+    }
+  },
+
   subscribeToGroupMessages: () => {
     const { selectedGroup, selectedRoom } = get();
     if (!selectedGroup || !selectedRoom) return;
 
-    const { authUser, pusher } = useAuthStore.getState();
+    const { pusher } = useAuthStore.getState();
     if (!pusher) return;
 
     const channel = pusher.subscribe(`private-group-${selectedGroup._id}`);
@@ -207,6 +267,30 @@ export const useChatStore = create(
         });
       }
     });
+
+    channel.bind("room:task-created", (data) => {
+      if (data.roomName === selectedRoom.name) {
+        set({ boardTasks: [...get().boardTasks, data.task] });
+      }
+    });
+
+    channel.bind("room:task-updated", (data) => {
+      if (data.roomName === selectedRoom.name) {
+        set({
+          boardTasks: get().boardTasks.map((t) =>
+            t._id === data.task._id ? data.task : t
+          ),
+        });
+      }
+    });
+
+    channel.bind("room:task-deleted", (data) => {
+      if (data.roomName === selectedRoom.name) {
+        set({
+          boardTasks: get().boardTasks.filter((t) => t._id !== data.taskId),
+        });
+      }
+    });
   },
 
   unsubscribeFromGroupMessages: () => {
@@ -214,8 +298,13 @@ export const useChatStore = create(
     const { pusher } = useAuthStore.getState();
     if (!pusher || !selectedGroup) return;
 
-    const channel = pusher.subscribe(`private-group-${selectedGroup._id}`);
-    channel.unbind("room:newMessage");
+    const channel = pusher.channel(`private-group-${selectedGroup._id}`);
+    if (channel) {
+      channel.unbind("room:newMessage");
+      channel.unbind("room:task-created");
+      channel.unbind("room:task-updated");
+      channel.unbind("room:task-deleted");
+    }
     pusher.unsubscribe(`private-group-${selectedGroup._id}`);
   },
     }),

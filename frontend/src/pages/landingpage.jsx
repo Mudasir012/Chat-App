@@ -1,33 +1,237 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Marquee from '../components/Marquee'
-import { Zap, Rocket, Phone, Video } from 'lucide-react'
+import { Zap, Rocket, Phone, Video, Send, Smile, Paperclip, MoreVertical, CheckCheck } from 'lucide-react'
 
 function ChatDemo() {
+  const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const chatContainerRef = useRef(null);
+  const autoplayTimerRef = useRef(null);
+  const typingTimerRef = useRef(null);
+  const replyTimerRef = useRef(null);
+  const scriptIndexRef = useRef(0);
+  const isUserInteractingRef = useRef(false);
+
+  const AUTOPLAY_SCRIPT = [
+    { sender: "Sarah", text: "Hey! Did you check out the new design system?", delay: 1500, typingTime: 1200 },
+    { sender: "You", text: "Yeah! It looks incredibly clean. The glassmorphism is spot on. ✨", delay: 1500, typingTime: 1200 },
+    { sender: "Sarah", text: "I know, right? And the message delivery is under 50ms.", delay: 1500, typingTime: 1000 },
+    { sender: "Sarah", text: "Try typing a message below to test it yourself! 👇", delay: 1500, typingTime: 1200 }
+  ];
+
+  const SARAH_REPLIES = [
+    "That is so cool! Plavox is built for real-time engagement.",
+    "Agreed! And the best part is that everything is end-to-end encrypted.",
+    "Nice! Try signing up above to create your own room and invite friends.",
+    "Exactly! Real-time messaging with no lag at all.",
+    "Haha yes! Let's get everyone to transition over to this."
+  ];
+
+  const replyIndexRef = useRef(0);
+
+  // Scroll to bottom on new messages or typing state change without shifting window viewport
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [messages, isTyping]);
+
+  // Run autoplay script
+  useEffect(() => {
+    if (isUserInteractingRef.current) return;
+
+    const runScriptStep = () => {
+      const step = AUTOPLAY_SCRIPT[scriptIndexRef.current];
+      if (!step) {
+        // Wait at the end of the script before repeating
+        autoplayTimerRef.current = setTimeout(() => {
+          setMessages([]);
+          scriptIndexRef.current = 0;
+          runScriptStep();
+        }, 6000);
+        return;
+      }
+
+      autoplayTimerRef.current = setTimeout(() => {
+        // Show typing indicator
+        if (step.sender !== "You") {
+          setIsTyping(true);
+        }
+        
+        typingTimerRef.current = setTimeout(() => {
+          setIsTyping(false);
+          setMessages(prev => [
+            ...prev,
+            {
+              id: Date.now() + Math.random(),
+              sender: step.sender,
+              text: step.text,
+              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              isMe: step.sender === "You"
+            }
+          ]);
+          scriptIndexRef.current += 1;
+          runScriptStep();
+        }, step.typingTime);
+
+      }, step.delay);
+    };
+
+    runScriptStep();
+
+    return () => {
+      clearTimeout(autoplayTimerRef.current);
+      clearTimeout(typingTimerRef.current);
+    };
+  }, []);
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    // Set user as interacting to stop autoplay
+    isUserInteractingRef.current = true;
+    clearTimeout(autoplayTimerRef.current);
+    clearTimeout(typingTimerRef.current);
+    clearTimeout(replyTimerRef.current);
+    setIsTyping(false);
+
+    const userMessage = {
+      id: Date.now(),
+      sender: "You",
+      text: inputValue.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      isMe: true
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue("");
+
+    // Trigger Sarah's typing response
+    setIsTyping(true);
+    replyTimerRef.current = setTimeout(() => {
+      setIsTyping(false);
+      const replyText = SARAH_REPLIES[replyIndexRef.current % SARAH_REPLIES.length];
+      replyIndexRef.current += 1;
+
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: "Sarah",
+          text: replyText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isMe: false
+        }
+      ]);
+    }, 1500);
+  };
+
   return (
-    <div className="h-full w-full bg-[var(--secondary-bg)] rounded-[1.8rem] p-6 flex flex-col justify-between">
-      <div className="space-y-6">
-        <div className="rounded-[1.5rem] bg-[var(--bg)]/80 p-6 text-center text-sm text-[var(--text-muted)] font-semibold">
-          Live chat preview
+    <div className="h-full w-full bg-[var(--secondary-bg)] rounded-[1.8rem] flex flex-col justify-between overflow-hidden border border-[var(--border)]">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 bg-[var(--surface)]/30 border-b border-[var(--border)]">
+        <div className="flex items-center gap-2.5">
+          <div className="relative">
+            <div className="size-8 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] flex items-center justify-center font-bold text-xs border border-[var(--accent)]/30">
+              S
+            </div>
+            <div className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-500 border-2 border-[var(--secondary-bg)]" />
+          </div>
+          <div>
+            <p className="text-xs font-bold leading-tight">Sarah Connor</p>
+            <p className="text-[9px] text-emerald-500 font-medium">
+              {isTyping ? "typing..." : "online"}
+            </p>
+          </div>
         </div>
-        <div className="space-y-3">
-          <div className="rounded-[1.5rem] bg-[var(--bg)]/60 p-4">
-            <p className="text-sm font-semibold text-[var(--text)]">No dummy chats here — only real conversations appear in the app.</p>
-          </div>
-          <div className="rounded-[1.5rem] bg-[var(--bg)]/60 p-4">
-            <p className="text-sm font-semibold text-[var(--text)]">Invite your peers with group invite codes and talk in real time.</p>
-          </div>
-          <div className="rounded-[1.5rem] bg-[var(--bg)]/60 p-4">
-            <p className="text-sm font-semibold text-[var(--text)]">All user lists are fetched live from the backend.</p>
-          </div>
+        <div className="flex items-center gap-2.5 text-[var(--text-muted)]">
+          <button type="button" className="hover:text-[var(--text)] transition-colors cursor-pointer"><Phone className="size-3.5" /></button>
+          <button type="button" className="hover:text-[var(--text)] transition-colors cursor-pointer"><Video className="size-3.5" /></button>
+          <button type="button" className="hover:text-[var(--text)] transition-colors cursor-pointer"><MoreVertical className="size-3.5" /></button>
         </div>
       </div>
-      <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-[0.2em]">
-        Real chat users only, no placeholder names.
+
+      {/* Messages */}
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3.5 flex flex-col min-h-0">
+        {messages.length === 0 && !isTyping && (
+          <div className="h-full flex items-center justify-center text-center p-4">
+            <p className="text-[11px] text-[var(--text-muted)]/70 leading-relaxed italic">
+              Loading chat demo...
+            </p>
+          </div>
+        )}
+        {messages.map((msg) => (
+          <div
+            key={msg.id}
+            className={`flex flex-col max-w-[85%] ${
+              msg.isMe ? "ml-auto items-end" : "items-start"
+            }`}
+          >
+            <div
+              className={`px-3 py-2 rounded-2xl text-xs break-words shadow-sm leading-relaxed ${
+                msg.isMe
+                  ? "bg-[var(--accent)] text-[var(--accent-content)] rounded-tr-none"
+                  : "bg-[var(--surface)] text-[var(--text)] rounded-tl-none border border-[var(--border)]"
+              }`}
+            >
+              {msg.text}
+            </div>
+            <div className="flex items-center gap-1 mt-1 px-1">
+              <span className="text-[8px] text-[var(--text-muted)]/70">{msg.time}</span>
+              {msg.isMe && (
+                <CheckCheck className="size-3 text-[var(--accent-hover,#60A5FA)]" />
+              )}
+            </div>
+          </div>
+        ))}
+
+        {isTyping && (
+          <div className="flex flex-col max-w-[85%] items-start">
+            <div className="px-3.5 py-2 bg-[var(--surface)] rounded-2xl rounded-tl-none border border-[var(--border)] flex items-center gap-1 shadow-sm h-8">
+              <span className="size-1.5 bg-[var(--text-muted)]/80 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="size-1.5 bg-[var(--text-muted)]/80 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="size-1.5 bg-[var(--text-muted)]/80 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Input Footer */}
+      <form onSubmit={handleSend} className="p-2 bg-[var(--surface)]/20 border-t border-[var(--border)] flex items-center gap-1.5">
+        <button type="button" className="p-1 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer">
+          <Paperclip className="size-3.5" />
+        </button>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Type a preview message..."
+          className="flex-1 min-w-0 bg-[var(--bg)]/50 border border-[var(--border)] rounded-full px-3 py-1.5 text-xs text-[var(--text)] placeholder-[var(--text-muted)]/60 focus:outline-none focus:border-[var(--accent)] transition-all"
+        />
+        <button type="button" className="p-1 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer">
+          <Smile className="size-3.5" />
+        </button>
+        <button
+          type="submit"
+          disabled={!inputValue.trim()}
+          className={`p-1.5 rounded-full flex items-center justify-center transition-all ${
+            inputValue.trim()
+              ? "bg-[var(--accent)] text-[var(--accent-content)] hover:scale-105 active:scale-95 cursor-pointer"
+              : "bg-[var(--surface)] text-[var(--text-muted)]/40 cursor-not-allowed"
+          }`}
+        >
+          <Send className="size-3" />
+        </button>
+      </form>
     </div>
   )
 }
@@ -37,9 +241,9 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-x-hidden selection:bg-[var(--accent)] selection:text-[var(--accent-content)]">
       {/* Dynamic Background */}
       <div className="grid-bg" />
-      <div className="orb w-[500px] h-[500px] bg-[rgba(173,181,189,0.08)] top-[-200px] right-[-100px]" />
-      <div className="orb w-[400px] h-[400px] bg-[rgba(108,117,125,0.06)] bottom-0 left-[-100px]" />
-      <div className="orb w-[300px] h-[300px] bg-[rgba(248,249,250,0.04)] top-[40%] left-[30%]" />
+      <div className="orb w-[500px] h-[500px] bg-[var(--orb-1)] top-[-200px] right-[-100px]" />
+      <div className="orb w-[400px] h-[400px] bg-[var(--orb-2)] bottom-0 left-[-100px]" />
+      <div className="orb w-[300px] h-[300px] bg-[var(--orb-3)] top-[40%] left-[30%]" />
       
       <Navbar />
       
@@ -57,7 +261,7 @@ export default function LandingPage() {
             
             <h1 className='text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.95]'>
               Chat that hits<br />
-              <span className="text-[var(--accent)]">different.</span>
+              <span className="bg-gradient-to-r from-[var(--accent)] via-[var(--secondary-accent)] to-[var(--accent)] bg-clip-text text-transparent font-black">different.</span>
             </h1>
             
             <p className="text-lg text-[var(--text-muted)] max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
@@ -155,7 +359,7 @@ export default function LandingPage() {
             ].map((f, i) => (
               <motion.div 
                 key={i} 
-                whileHover={{ y: -5, borderColor: 'rgba(173,181,189,0.25)' }}
+                whileHover={{ y: -5, borderColor: 'var(--accent)', boxShadow: '0 10px 30px -10px rgba(59,130,246,0.15)' }}
                 className={`p-8 bg-[var(--secondary-bg)] rounded-[2rem] border border-[var(--border)] shadow-sm transition-all ${f.wide ? 'md:col-span-2' : ''}`}
               >
                 <div className="size-14 rounded-2xl flex items-center justify-center text-2xl mb-8" style={{ backgroundColor: f.color }}>

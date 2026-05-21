@@ -1,6 +1,7 @@
 import Group from "../models/Group.js";
 import User from "../models/User.js";
 import Message from "../models/Message.js";
+import Task from "../models/Task.js";
 import { pusher } from "../lib/pusher.js";
 
 export const createGroup = async (req, res) => {
@@ -26,7 +27,7 @@ export const createGroup = async (req, res) => {
       .populate("members.user", "fullName profilePic email")
       .populate("createdBy", "fullName profilePic");
 
-    res.status(201).json(populatedGroup);
+    res.status(201).json({ group: populatedGroup });
   } catch (error) {
     console.log("Error in createGroup:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
@@ -346,6 +347,115 @@ export const getGroupInvites = async (req, res) => {
     res.status(200).json(inviteData);
   } catch (error) {
     console.log("Error in getGroupInvites:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getGroupTasks = async (req, res) => {
+  try {
+    const { groupId, roomName } = req.params;
+    const tasks = await Task.find({ groupId, roomName })
+      .populate("assignedTo", "fullName profilePic email")
+      .populate("createdBy", "fullName profilePic")
+      .sort({ createdAt: -1 });
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.log("Error in getGroupTasks:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const createGroupTask = async (req, res) => {
+  try {
+    const { groupId, roomName } = req.params;
+    const { title, description, status, assignedTo } = req.body;
+    const createdBy = req.user._id;
+
+    if (!title) {
+      return res.status(400).json({ message: "Task title is required" });
+    }
+
+    const task = new Task({
+      groupId,
+      roomName,
+      title,
+      description: description || "",
+      status: status || "todo",
+      assignedTo: assignedTo || null,
+      createdBy,
+    });
+
+    await task.save();
+
+    const populatedTask = await Task.findById(task._id)
+      .populate("assignedTo", "fullName profilePic email")
+      .populate("createdBy", "fullName profilePic");
+
+    pusher.trigger(`private-group-${groupId}`, "room:task-created", {
+      task: populatedTask,
+      roomName,
+    });
+
+    res.status(201).json(populatedTask);
+  } catch (error) {
+    console.log("Error in createGroupTask:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const updateGroupTask = async (req, res) => {
+  try {
+    const { groupId, taskId } = req.params;
+    const { title, description, status, assignedTo } = req.body;
+
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    if (title !== undefined) task.title = title;
+    if (description !== undefined) task.description = description;
+    if (status !== undefined) task.status = status;
+    if (assignedTo !== undefined) task.assignedTo = assignedTo || null;
+
+    await task.save();
+
+    const populatedTask = await Task.findById(taskId)
+      .populate("assignedTo", "fullName profilePic email")
+      .populate("createdBy", "fullName profilePic");
+
+    pusher.trigger(`private-group-${groupId}`, "room:task-updated", {
+      task: populatedTask,
+      roomName: task.roomName,
+    });
+
+    res.status(200).json(populatedTask);
+  } catch (error) {
+    console.log("Error in updateGroupTask:", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const deleteGroupTask = async (req, res) => {
+  try {
+    const { groupId, taskId } = req.params;
+
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    const roomName = task.roomName;
+    await Task.findByIdAndDelete(taskId);
+
+    pusher.trigger(`private-group-${groupId}`, "room:task-deleted", {
+      taskId,
+      roomName,
+    });
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    console.log("Error in deleteGroupTask:", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

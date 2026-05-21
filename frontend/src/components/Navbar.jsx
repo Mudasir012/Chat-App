@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 import { LogOut, User, MessageSquare } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
 export default function Navbar({ isCompact }) {
   const { logout, authUser } = useAuthStore()
@@ -28,6 +29,7 @@ export default function Navbar({ isCompact }) {
       )}
 
       <div className="flex items-center gap-4">
+        <ThemeToggle />
         <nav>
           <ul className='flex flex-row gap-4 items-center'>
             {!authUser ? (

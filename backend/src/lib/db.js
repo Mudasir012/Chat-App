@@ -23,4 +23,4 @@ export const ensureDbConnected = async (req, res, next) => {
     console.error("DB connection failed in middleware:", error.message);
     res.status(503).json({ message: "Database unavailable, try again later" });
   }
-};
+};  

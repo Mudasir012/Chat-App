@@ -97,7 +97,7 @@ export default function AuthPage() {
         className="w-full max-w-5xl h-[85vh] md:h-[700px] bg-[var(--secondary-bg)] rounded-[2rem] overflow-hidden shadow-2xl border border-[var(--border)] flex flex-col md:flex-row"
       >
         {/* Left Panel - Branding & Images */}
-        <div className="relative w-full md:w-1/2 bg-gradient-to-br from-[var(--surface)] to-[var(--bg)] overflow-hidden flex flex-col">
+        <div className="relative w-full md:w-1/2 bg-gradient-to-br from-[var(--surface)] to-[var(--bg)] overflow-hidden hidden md:flex flex-col">
           {/* Image carousel */}
           <div className="relative flex-1 min-h-[200px] md:min-h-0">
             <AnimatePresence mode="wait">

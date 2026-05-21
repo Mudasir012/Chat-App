@@ -45,7 +45,7 @@ const groupSchema = new mongoose.Schema(
         },
         type: {
           type: String,
-          enum: ["text", "voice"],
+          enum: ["text", "voice", "board"],
           default: "text",
         },
         topic: {
