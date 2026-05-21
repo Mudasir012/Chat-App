@@ -11,7 +11,7 @@ const COLUMNS = [
 ];
 
 const BoardContainer = () => {
-  const { boardTasks, fetchBoardTasks, createTask, updateTask, deleteTask, selectedGroup } = useChatStore();
+  const { boardTasks, fetchBoardTasks, createTask, updateTask, deleteTask, selectedGroup, selectedRoom } = useChatStore();
   const { authUser } = useAuthStore();
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
@@ -20,7 +20,7 @@ const BoardContainer = () => {
 
   useEffect(() => {
     fetchBoardTasks();
-  }, []);
+  }, [selectedGroup?._id, selectedRoom?.name]);
 
   const isAdmin = selectedGroup?.members?.some(
     (m) => m.user?._id === authUser._id && m.role === "admin"

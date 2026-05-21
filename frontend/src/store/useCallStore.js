@@ -60,4 +60,11 @@ export const useCallStore = create((set, get) => ({
     }
     set({ call: null });
   },
+
+  setCallStatus: (status) => {
+    const { call } = get();
+    if (call) {
+      set({ call: { ...call, status } });
+    }
+  },
 }));

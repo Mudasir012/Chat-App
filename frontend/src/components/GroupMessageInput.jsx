@@ -34,27 +34,16 @@ const GroupMessageInput = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!text.trim() && !image) return;
+    if (!text.trim() && !imagePreview) return;
     if (!selectedGroup || !selectedRoom) return;
 
     setIsSending(true);
     try {
-      let imageUrl = null;
-
-      if (image) {
-        const reader = new FileReader();
-        imageUrl = await new Promise((resolve, reject) => {
-          reader.onloadend = () => resolve(reader.result);
-          reader.onerror = reject;
-          reader.readAsDataURL(image);
-        });
-      }
-
       const res = await axiosInstance.post(
         `/groups/${selectedGroup._id}/rooms/${selectedRoom.name}/messages`,
         {
           text: text.trim(),
-          image: imageUrl,
+          image: imagePreview,
         }
       );
 

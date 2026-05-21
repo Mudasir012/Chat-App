@@ -6,34 +6,29 @@ import Pusher from "pusher-js";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : (import.meta.env.VITE_BACKEND_URL || "");
 
-const persistedAuth = typeof window !== "undefined"
-  ? JSON.parse(localStorage.getItem("plavox-auth-storage") || "{}")
-  : {};
-const initialAuthUser = persistedAuth?.state?.authUser || null;
-
 export const useAuthStore = create(
   persist(
     (set, get) => ({
-  authUser: initialAuthUser,
+  authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
-  isCheckingAuth: !!initialAuthUser,
+  isCheckingAuth: true,
   onlineUsers: [],
   pusher: null,
+  _authChecked: false,
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data, isCheckingAuth: false });
+      set({ authUser: res.data, isCheckingAuth: false, _authChecked: true });
       get().connectPusher();
     } catch (error) {
       console.log("Error in checkAuth:", error);
       if (error.response?.status === 401) {
-        set({ authUser: null, isCheckingAuth: false });
+        set({ authUser: null, isCheckingAuth: false, _authChecked: true });
       } else {
-        // Network error / cold start: trust persisted authUser
-        set({ isCheckingAuth: false });
+        set({ isCheckingAuth: false, _authChecked: true });
       }
     }
   },
@@ -228,8 +223,8 @@ export const useAuthStore = create(
       import("./useCallStore").then((mod) => mod.useCallStore.getState().receiveCall(data));
     });
 
-    userChannel.bind("call:accepted", () => {
-      import("./useCallStore").then((mod) => mod.useCallStore.getState().acceptCall());
+    userChannel.bind("call:accepted", (data) => {
+      import("./useCallStore").then((mod) => mod.useCallStore.getState().setCallStatus("connected"));
     });
 
     userChannel.bind("call:declined", () => {
@@ -252,6 +247,10 @@ export const useAuthStore = create(
     {
       name: "plavox-auth-storage",
       partialize: (state) => ({ authUser: state.authUser }),
+      merge: (persisted, current) => {
+        if (current._authChecked) return current;
+        return { ...current, ...persisted };
+      },
     }
   )
 );

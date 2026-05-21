@@ -110,7 +110,9 @@ const Sidebar = () => {
         name: newRoomName.trim(),
         type: newRoomType,
       });
-      setGroups(res.data);
+      const updatedGroups = groups.map((g) => (g._id === res.data._id ? res.data : g));
+      setGroups(updatedGroups);
+      setSelectedGroup(res.data);
       setNewRoomName("");
       setNewRoomType("text");
       setShowCreateRoom(false);

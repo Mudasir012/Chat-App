@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Message from "../models/Message.js";
 import Task from "../models/Task.js";
 import { pusher } from "../lib/pusher.js";
+import cloudinary from "../lib/cloudinary.js";
 
 export const createGroup = async (req, res) => {
   try {
@@ -300,12 +301,23 @@ export const sendGroupMessage = async (req, res) => {
       return res.status(404).json({ message: "Room not found" });
     }
 
+    let imageUrl;
+    if (image) {
+      try {
+        const uploadResponse = await cloudinary.uploader.upload(image);
+        imageUrl = uploadResponse.secure_url;
+      } catch (uploadError) {
+        console.error("Cloudinary upload failed: ", uploadError.message);
+        return res.status(500).json({ message: "Image upload failed" });
+      }
+    }
+
     const message = new Message({
       senderId,
       groupId,
       roomId: roomName,
       text,
-      image,
+      image: imageUrl,
     });
 
     await message.save();
