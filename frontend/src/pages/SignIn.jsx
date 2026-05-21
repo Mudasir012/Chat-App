@@ -26,50 +26,54 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
-        <div className="absolute top-[10%] left-[5%] size-64 bg-[var(--accent)] opacity-[0.05] blur-3xl rounded-full" />
-        <div className="absolute bottom-[10%] right-[5%] size-96 bg-[var(--secondary-accent)] opacity-[0.05] blur-3xl rounded-full" />
-      </div>
+      <div className="grid-bg" />
+      <div className="orb w-[500px] h-[500px] bg-[var(--orb-1)] top-[-200px] right-[-100px]" />
+      <div className="orb w-[400px] h-[400px] bg-[var(--orb-2)] bottom-0 left-[-100px]" />
 
       <Navbar />
-      <main className="flex-1 w-full flex items-center justify-center py-20 px-4">
+      <main className="flex-1 w-full flex items-center justify-center py-20 px-4 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-xl shadow-black/5"
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+          className="w-full max-w-md p-8 md:p-12 card-curvy shadow-2xl shadow-black/10"
         >
           <div className="space-y-3 text-center mb-10">
-            <div className="size-16 bg-[var(--accent)] rounded-2xl flex items-center justify-center text-[#212529] mx-auto shadow-lg shadow-black/20 mb-6">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", damping: 15 }}
+              className="size-16 bg-gradient-to-br from-[var(--accent)] to-[var(--secondary-accent)] rounded-2xl flex items-center justify-center text-white mx-auto shadow-lg shadow-black/20 mb-6"
+            >
               <LogIn className="size-8" />
-            </div>
+            </motion.div>
             <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
-            <p className="text-sm text-[var(--text-muted)]">Sign in to your ChatApp account</p>
+            <p className="text-sm text-[var(--text-muted)]">Sign in to your account</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
-                <Mail className="size-4" />
+              <label className="text-xs font-bold ml-1 flex items-center gap-2 text-[var(--text-muted)] uppercase tracking-wider">
+                <Mail className="size-3.5" />
                 Email
               </label>
               <input
                 type="email"
-                className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm"
+                className="input-base"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-semibold ml-1 flex items-center gap-2 text-[var(--text-muted)]">
-                <Lock className="size-4" />
+              <label className="text-xs font-bold ml-1 flex items-center gap-2 text-[var(--text-muted)] uppercase tracking-wider">
+                <Lock className="size-3.5" />
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-2xl p-3.5 pr-11 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all text-sm"
+                  className="input-base pr-11"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -79,11 +83,11 @@ export default function SignIn() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors cursor-pointer"
                 >
-                  {showPassword ? <EyeOff className="size-4.5" /> : <Eye className="size-4.5" />}
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
               <div className="text-right">
-                <Link to="/forgot-password" size="sm" className="text-sm text-[var(--accent)] font-semibold hover:underline">
+                <Link to="/forgot-password" className="text-xs text-[var(--accent)] font-semibold hover:underline underline-offset-2">
                   Forgot password?
                 </Link>
               </div>
@@ -91,7 +95,7 @@ export default function SignIn() {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="btn-primary w-full py-4 text-base mt-4 flex items-center justify-center gap-2"
+              className="btn-primary w-full py-4 text-base mt-2 flex items-center justify-center gap-2"
             >
               {isLoggingIn ? (
                 <>
@@ -106,7 +110,10 @@ export default function SignIn() {
 
           <div className="text-center mt-10 pt-6 border-t border-[var(--border)]">
             <p className="text-sm text-[var(--text-muted)]">
-              New here? <Link to="/signup" className="text-[var(--accent)] font-semibold hover:underline decoration-2 underline-offset-4">Create an account</Link>
+              New here?{" "}
+              <Link to="/signup" className="text-[var(--accent)] font-semibold hover:underline underline-offset-4 transition-all">
+                Create an account
+              </Link>
             </p>
           </div>
         </motion.div>

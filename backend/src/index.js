@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import path from "path";
 
 import { connectDB, ensureDbConnected } from "./lib/db.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -18,13 +17,25 @@ const app = express();
 dotenv.config();
 
 const PORT = process.env.PORT;
-const __dirname = path.resolve();
 
 app.use(express.json({ limit: '10mb' })); // support larger image uploads
 app.use(cookieParser());
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "http://localhost:3000",
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.CLIENT_URL || true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
@@ -57,13 +68,6 @@ app.post("/api/pusher/auth", protectRoute, (req, res) => {
   res.send(authResponse);
 });
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-  });
-}
 if (process.env.NODE_ENV !== "production") {
   app.listen(PORT, () => {
     console.log("server is running on PORT:" + PORT);

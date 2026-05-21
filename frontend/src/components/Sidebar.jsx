@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import {
@@ -13,9 +14,11 @@ import {
   Settings,
   Copy,
   Check,
+  X,
   LogOut,
   FolderPlus,
 } from "lucide-react";
+import UserProfilePopup from "./UserProfilePopup";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { axiosInstance } from "../lib/axios";
@@ -39,6 +42,7 @@ const Sidebar = () => {
   } = useChatStore();
   const { onlineUsers, authUser, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState("inbox");
+  const [profilePopupUserId, setProfilePopupUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -150,14 +154,23 @@ const Sidebar = () => {
       {/* Header */}
       <div className="p-4 border-b border-[var(--border)]">
         <div className="flex items-center justify-between mb-4">
-          <span className="font-bold text-lg hidden lg:block font-display">Plavox</span>
-          <button
-            onClick={logout}
-            className="p-2 rounded-lg hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-500 transition-colors"
-            title="Logout"
-          >
-            <LogOut className="size-4" />
-          </button>
+          <Link to="/" className="font-bold text-lg hidden lg:block font-display hover:text-[var(--accent)] transition-colors">Plavox</Link>
+          <div className="flex items-center gap-1">
+            <Link
+              to="/settings"
+              className="p-2 rounded-lg hover:bg-[var(--accent)]/10 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+              title="Settings"
+            >
+              <Settings className="size-4" />
+            </Link>
+            <button
+              onClick={logout}
+              className="p-2 rounded-lg hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-500 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="size-4" />
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -201,14 +214,22 @@ const Sidebar = () => {
               {/* Search */}
               <div className="px-3 mb-3 hidden lg:block">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-[var(--text-muted)]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-[var(--text-muted)] pointer-events-none" />
                   <input
                     type="text"
                     placeholder="Search users..."
-                    className="w-full bg-[var(--bg)]/50 border border-[var(--border)] rounded-lg py-2 pl-9 pr-3 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
+                    className="w-full bg-[var(--bg)]/50 border border-[var(--border)] rounded-lg py-2 pl-9 pr-8 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface)] transition-all"
+                    >
+                      <X className="size-3" />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -224,35 +245,47 @@ const Sidebar = () => {
 
               {/* User list */}
               {filteredUsers.map((user) => (
-                <button
+                <div
                   key={user._id}
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setActiveTab("inbox");
-                  }}
-                  className={`w-full px-3 py-2.5 flex items-center gap-3 hover:bg-[var(--accent)]/5 transition-all ${
+                  className={`w-full flex items-center gap-0 hover:bg-[var(--accent)]/5 transition-all ${
                     selectedUser?._id === user._id && activeTab === "inbox"
                       ? "bg-[var(--accent)]/10 border-r-2 border-[var(--accent)]"
                       : ""
                   }`}
                 >
-                  <div className="relative flex-shrink-0">
+                  <button
+                    onClick={() => {
+                      setProfilePopupUserId(user._id);
+                    }}
+                    className="relative flex-shrink-0 p-3 py-2.5 hover:opacity-80 transition-opacity"
+                    title="View profile"
+                  >
                     <img
                       src={user.profilePic || DEFAULT_AVATAR + user.fullName}
                       alt={user.fullName}
                       className="size-9 object-cover rounded-full border border-[var(--border)]"
                     />
                     {onlineUsers.includes(user._id) && (
-                      <span className="absolute -bottom-0.5 -right-0.5 size-2.5 bg-green-500 rounded-full border-2 border-[var(--secondary-bg)]" />
+                      <span className="absolute bottom-1.5 right-0.5 size-2.5 bg-green-500 rounded-full border-2 border-[var(--secondary-bg)]" />
                     )}
-                  </div>
-                  <div className="hidden lg:block text-left min-w-0 flex-1">
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user);
+                      setActiveTab("inbox");
+                    }}
+                    className="hidden lg:block text-left min-w-0 flex-1 py-2.5"
+                  >
                     <div className="text-sm font-semibold truncate">{user.fullName}</div>
                     <div className="text-[10px] text-[var(--text-muted)]">
-                      {onlineUsers.includes(user._id) ? "Active now" : "Offline"}
+                      {onlineUsers.includes(user._id) ? (
+                        <span className="text-green-500 font-semibold">Active now</span>
+                      ) : (
+                        "Offline"
+                      )}
                     </div>
-                  </div>
-                </button>
+                  </button>
+                </div>
               ))}
 
               {filteredUsers.length === 0 && (
@@ -539,6 +572,8 @@ const Sidebar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <UserProfilePopup userId={profilePopupUserId} onClose={() => setProfilePopupUserId(null)} />
     </aside>
   );
 };

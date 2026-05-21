@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { useChatStore } from "../store/useChatStore";
 import { Send, Image, Smile, X } from "lucide-react";
 import toast from "react-hot-toast";
@@ -79,17 +80,21 @@ const GroupMessageInput = () => {
   };
 
   return (
-    <div className="border-t border-[var(--border)] bg-[var(--secondary-bg)]/50 p-4">
+    <div className="border-t border-[var(--border)] bg-[var(--secondary-bg)]/30 p-4">
       {imagePreview && (
-        <div className="relative mb-3 inline-block">
-          <img src={imagePreview} alt="Preview" className="h-20 rounded-xl border border-[var(--border)]" />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative mb-3 inline-block"
+        >
+          <img src={imagePreview} alt="Preview" className="h-20 rounded-xl border border-[var(--border)] shadow-sm" />
           <button
             onClick={removeImage}
-            className="absolute -top-2 -right-2 size-5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+            className="absolute -top-2 -right-2 size-5 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors shadow-lg"
           >
             <X className="size-3" />
           </button>
-        </div>
+        </motion.div>
       )}
 
       <form onSubmit={handleSubmit} className="flex items-center gap-3">
@@ -114,7 +119,7 @@ const GroupMessageInput = () => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={`Message #${selectedRoom?.name || "general"}`}
-            className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-xl py-3 px-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20 focus:border-[var(--accent)] transition-all"
+            className="input-base pr-12"
             disabled={isSending}
           />
           <button
@@ -128,7 +133,7 @@ const GroupMessageInput = () => {
         <button
           type="submit"
           disabled={isSending || (!text.trim() && !image)}
-          className="p-3 rounded-xl bg-[var(--accent)] text-[var(--accent-content)] hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="p-3 rounded-xl bg-[var(--accent)] text-[var(--accent-content)] hover:bg-[var(--accent-hover)] transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
           <Send className="size-5" />
         </button>

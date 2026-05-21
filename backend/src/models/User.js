@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    instagram: {
+      type: String,
+      default: "",
+    },
+    github: {
+      type: String,
+      default: "",
+    },
+    contactEmail: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
       enum: ["online", "offline", "away"],

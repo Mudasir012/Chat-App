@@ -18,7 +18,7 @@ export const useAuthStore = create(
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
-  isCheckingAuth: !initialAuthUser,
+  isCheckingAuth: !!initialAuthUser,
   onlineUsers: [],
   pusher: null,
 

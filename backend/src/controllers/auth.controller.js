@@ -190,7 +190,7 @@ export const resetPassword = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
-    const { profilePic, bio, username, fullName } = req.body;
+    const { profilePic, bio, username, fullName, instagram, github, contactEmail } = req.body;
     const userId = req.user._id;
 
     const updateData = {};
@@ -201,6 +201,9 @@ export const updateProfile = async (req, res) => {
     if (bio !== undefined) updateData.bio = bio;
     if (username !== undefined) updateData.username = username;
     if (fullName !== undefined) updateData.fullName = fullName;
+    if (instagram !== undefined) updateData.instagram = instagram;
+    if (github !== undefined) updateData.github = github;
+    if (contactEmail !== undefined) updateData.contactEmail = contactEmail;
 
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
 
