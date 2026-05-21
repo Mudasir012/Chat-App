@@ -205,6 +205,14 @@ export const useAuthStore = create(
       set({ onlineUsers: userIds });
     });
 
+    channel.bind("pusher:subscription_error", (status) => {
+      if (status === 401) {
+        console.warn("Pusher auth failed (401), disconnecting");
+        get().disconnectPusher();
+        set({ authUser: null });
+      }
+    });
+
     channel.bind("pusher:member_added", (member) => {
       set({ onlineUsers: [...get().onlineUsers, member.id] });
     });

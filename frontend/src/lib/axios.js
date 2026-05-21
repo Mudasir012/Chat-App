@@ -17,3 +17,16 @@ export const axiosInstance = axios.create({
   baseURL: getBaseUrl(),
   withCredentials: true,
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      try {
+        const { useAuthStore } = await import("../store/useAuthStore");
+        useAuthStore.setState({ authUser: null, isCheckingAuth: false });
+      } catch {}
+    }
+    return Promise.reject(error);
+  }
+);

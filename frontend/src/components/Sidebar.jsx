@@ -40,7 +40,7 @@ const Sidebar = () => {
     createGroup,
     joinGroup,
   } = useChatStore();
-  const { onlineUsers, authUser, logout } = useAuthStore();
+  const { onlineUsers, authUser, logout, isCheckingAuth } = useAuthStore();
   const [activeTab, setActiveTab] = useState("inbox");
   const [profilePopupUserId, setProfilePopupUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -58,11 +58,11 @@ const Sidebar = () => {
   const DEFAULT_AVATAR = "https://api.dicebear.com/9.x/fun-emoji/svg?seed=";
 
   useEffect(() => {
-    if (authUser) {
+    if (authUser && !isCheckingAuth) {
       getUsers();
       loadGroups();
     }
-  }, [authUser]);
+  }, [authUser, isCheckingAuth]);
 
   const loadGroups = async () => {
     setIsFetchingGroups(true);
