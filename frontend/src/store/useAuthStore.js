@@ -183,9 +183,22 @@ export const useAuthStore = create(
 
     const pusher = new Pusher(import.meta.env.VITE_PUSHER_KEY, {
       cluster: import.meta.env.VITE_PUSHER_CLUSTER,
-      authEndpoint: `${BASE_URL}/api/pusher/auth`,
-      auth: {
-        withCredentials: true,
+      authorizer: (channel, options) => {
+        return {
+          authorize: (socketId, callback) => {
+            axiosInstance
+              .post("/pusher/auth", {
+                socket_id: socketId,
+                channel_name: channel.name,
+              })
+              .then((response) => {
+                callback(false, response.data);
+              })
+              .catch((error) => {
+                callback(true, error);
+              });
+          },
+        };
       },
     });
 
