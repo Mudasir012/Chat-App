@@ -466,7 +466,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <button className="mt-12 btn-ghost w-full">Get started free</button>
+              <Link to="/auth" className="mt-12 btn-ghost w-full inline-block text-center">Get started free</Link>
             </motion.div>
 
             <motion.div
@@ -494,7 +494,7 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <button className="mt-12 btn-primary w-full text-base">Upgrade to Pro</button>
+              <Link to="/auth" className="mt-12 btn-primary w-full text-base inline-block text-center">Upgrade to Pro</Link>
             </motion.div>
           </motion.div>
         </div>

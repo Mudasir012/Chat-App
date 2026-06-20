@@ -3,36 +3,32 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Phone, PhoneOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { axiosInstance } from "../lib/axios";
+import toast from "react-hot-toast";
 
 const CallOverlay = () => {
   const { call, acceptCall, declineCall, endCall } = useCallStore();
   const { authUser } = useAuthStore();
   const containerRef = useRef(null);
+  const [tokenError, setTokenError] = useState(false);
 
   useEffect(() => {
     if (!call || call.status !== "connected" || !containerRef.current) return;
 
     const myMeeting = async () => {
       try {
-        const appID = parseInt(import.meta.env.VITE_ZEGO_APP_ID);
-        const serverSecret = import.meta.env.VITE_ZEGO_SERVER_SECRET;
+        const tokenRes = await axiosInstance.post("/calls/token", {
+          roomId: call.roomId,
+        });
 
-        if (!appID || !serverSecret) {
-          console.error("ZegoCloud credentials missing in .env");
-          return;
-        }
+        const { token } = tokenRes.data;
+        if (!token) throw new Error("No call token returned");
 
-        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-          appID,
-          serverSecret,
-          call.roomId,
-          authUser._id,
-          authUser.fullName
-        );
+        setTokenError(false);
 
-        const zp = ZegoUIKitPrebuilt.create(kitToken);
-        
+        const zp = ZegoUIKitPrebuilt.create(token);
+
         zp.joinRoom({
           container: containerRef.current,
           scenario: {
@@ -47,6 +43,8 @@ const CallOverlay = () => {
         });
       } catch (err) {
         console.error("Failed to initialize ZegoCloud:", err);
+        setTokenError(true);
+        toast.error("Could not start call. Please try again.");
       }
     };
 

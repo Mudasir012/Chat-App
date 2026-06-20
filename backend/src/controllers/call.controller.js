@@ -1,4 +1,36 @@
 import { pusher } from "../lib/pusher.js";
+import { generateKitTokenForTest } from "../lib/zego.js";
+
+export const getCallToken = async (req, res) => {
+  try {
+    const { roomId } = req.body;
+    const user = req.user;
+
+    if (!roomId) {
+      return res.status(400).json({ message: "roomId is required" });
+    }
+
+    const appID = Number(process.env.ZEGO_APP_ID);
+    const serverSecret = process.env.ZEGO_SERVER_SECRET;
+
+    if (!appID || !serverSecret) {
+      return res.status(500).json({ message: "Zego credentials not configured" });
+    }
+
+    const token = generateKitTokenForTest(
+      appID,
+      serverSecret,
+      roomId,
+      user._id.toString(),
+      user.fullName || "Guest"
+    );
+
+    res.status(200).json({ token, appID });
+  } catch (error) {
+    console.error("Error generating call token:", error.message);
+    res.status(500).json({ message: "Failed to generate call token" });
+  }
+};
 
 export const inviteCall = async (req, res) => {
   try {

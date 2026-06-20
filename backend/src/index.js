@@ -2,6 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
 
 import { connectDB, ensureDbConnected } from "./lib/db.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -18,8 +21,19 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 
+app.use(helmet());
+app.use(morgan("dev"));
 app.use(express.json({ limit: '10mb' })); // support larger image uploads
 app.use(cookieParser());
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many auth attempts, please try again later" },
+});
+app.use("/api/auth", authLimiter);
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
@@ -28,11 +42,19 @@ const allowedOrigins = [
   "http://localhost:3000",
 ].filter(Boolean);
 
+if (process.env.CORS_ORIGINS) {
+  process.env.CORS_ORIGINS.split(",").forEach((o) => {
+    const trimmed = o.trim();
+    if (trimmed && !allowedOrigins.includes(trimmed)) allowedOrigins.push(trimmed);
+  });
+}
+
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
       callback(null, true);
     } else {
+      console.warn(`CORS blocked origin: ${origin}`);
       callback(new Error("Not allowed by CORS"));
     }
   },

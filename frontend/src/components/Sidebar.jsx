@@ -379,7 +379,7 @@ const Sidebar = () => {
                           ))}
 
                           {/* Create Room button for admins */}
-                          {group.createdBy === authUser._id && (
+                          {group.createdBy?._id?.toString?.() === authUser._id && (
                             <button
                               onClick={() => setShowCreateRoom(true)}
                               className="w-full px-3 py-1.5 flex items-center gap-2 text-xs text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--accent)]/5 transition-all rounded mt-1"

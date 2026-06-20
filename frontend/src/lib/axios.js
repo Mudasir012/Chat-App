@@ -4,13 +4,12 @@ const getBaseUrl = () => {
   if (import.meta.env.MODE === "development") return "http://localhost:5001/api";
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  if (backendUrl) return `${backendUrl}/api`;
-
-  if (typeof window !== "undefined") {
-    return `${window.location.origin}/api`;
+  if (!backendUrl) {
+    throw new Error(
+      "VITE_BACKEND_URL is not set. Add it to your frontend environment variables (e.g. https://your-api.vercel.app)."
+    );
   }
-
-  return "/api";
+  return `${backendUrl.replace(/\/$/, "")}/api`;
 };
 
 export const axiosInstance = axios.create({

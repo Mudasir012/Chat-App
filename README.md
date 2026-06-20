@@ -45,22 +45,17 @@ cd chat-app
 cd backend
 npm install
 ```
-Create a `.env` file in the `backend` folder and add the following:
-```env
-PORT=5001
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-MAIL_USER=your_email@gmail.com
-MAIL_PASS=your_app_password
-NODE_ENV=development
+Copy the example environment file and fill in your real credentials:
+```bash
+cp backend/.env.example backend/.env
 ```
+
+Never commit `.env` files to Git. Rotate all secrets before deploying.
 
 ### 3. Frontend Setup
 ```bash
 cd ../frontend
+cp .env.example .env
 npm install
 ```
 
@@ -98,6 +93,10 @@ The app will be running at `http://localhost:5173`.
 │   │   ├── store/          # Zustand stores
 │   │   └── lib/            # Axios config
 ```
+
+## 🚀 Deployment
+
+See [`DEPLOYMENT.md`](./DEPLOYMENT.md) for step-by-step instructions on deploying both the frontend and backend to Vercel, including required environment variables.
 
 ## 📄 LICENSE
 

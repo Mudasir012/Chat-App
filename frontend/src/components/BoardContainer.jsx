@@ -23,10 +23,12 @@ const BoardContainer = () => {
   }, [selectedGroup?._id, selectedRoom?.name]);
 
   const isAdmin = selectedGroup?.members?.some(
-    (m) => m.user?._id === authUser._id && m.role === "admin"
+    (m) => m.user?._id?.toString?.() === authUser._id && m.role === "admin"
   );
   const canDelete = (task) =>
-    task.createdBy?._id === authUser._id || task.createdBy === authUser._id || isAdmin;
+    task.createdBy?._id?.toString?.() === authUser._id ||
+    task.createdBy?.toString?.() === authUser._id ||
+    isAdmin;
 
   const handleCreate = async (e) => {
     e.preventDefault();
